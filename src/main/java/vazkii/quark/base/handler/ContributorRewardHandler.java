@@ -127,7 +127,6 @@ public class ContributorRewardHandler {
 				}
 			} catch (IOException e) {
 				// Quark.LOG.error("Failed to load patreon information", e);
-				// zby sb
 			}
 		}
 
