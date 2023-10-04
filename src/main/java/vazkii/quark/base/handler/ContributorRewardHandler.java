@@ -135,7 +135,7 @@ public class ContributorRewardHandler {
 					load(patreonTiers);
 				}
 			} catch (IOException e) {
-				Quark.LOG.error("Failed to load patreon information", e);
+				// Quark.LOG.error("Failed to load patreon information", e);
 			}
 		}
 
