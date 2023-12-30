@@ -280,7 +280,7 @@ public class ChestSearchingModule extends QuarkModule {
 		//			return true;
 
 		ResourceLocation itemName = Registry.ITEM.getKey(item);
-		Optional<? extends ModContainer> mod = ModList.get().getModContainerById(itemName.getPath());
+		Optional<? extends ModContainer> mod = ModList.get().getModContainerById(itemName.getNamespace());
 		if(mod.isPresent() && matcher.test(mod.orElse(null).getModInfo().getDisplayName().toLowerCase(Locale.ROOT), search))
 			return true;
 

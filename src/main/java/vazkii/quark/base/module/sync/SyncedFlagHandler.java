@@ -28,6 +28,14 @@ public class SyncedFlagHandler {
 		return set;
 	}
 
+	public static int expectedLength() {
+		return allFlags.size();
+	}
+
+	public static int expectedHash() {
+		return allFlags.hashCode();
+	}
+
 	private static Set<String> decodeFlags(BitSet bitSet) {
 		Set<String> enabledFlags = new HashSet<>();
 
@@ -48,7 +56,7 @@ public class SyncedFlagHandler {
 	}
 
 	public static void sendFlagInfoToPlayers() {
-		QuarkNetwork.sendToPlayers(new S2CUpdateFlag(), flagsFromPlayers.keySet());
+		QuarkNetwork.sendToPlayers(S2CUpdateFlag.createPacket(), flagsFromPlayers.keySet());
 	}
 
 	private static final WeakHashMap<PacketListener, Set<String>> flagsFromServer = new WeakHashMap<>();

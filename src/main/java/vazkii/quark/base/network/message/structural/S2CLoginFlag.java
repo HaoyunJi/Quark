@@ -13,18 +13,26 @@ import java.util.function.BiConsumer;
 public class S2CLoginFlag extends HandshakeMessage {
 
 	public BitSet flags;
+	public int expectedLength;
+	public int expectedHash;
 
 	public S2CLoginFlag() {
 		flags = SyncedFlagHandler.compileFlagInfo();
+		expectedLength = SyncedFlagHandler.expectedLength();
+		expectedHash = SyncedFlagHandler.expectedHash();
 	}
 
 	public S2CLoginFlag(FriendlyByteBuf buf) {
 		this.flags = BitSet.valueOf(buf.readLongArray());
+		this.expectedLength = buf.readInt();
+		this.expectedHash = buf.readInt();
 	}
 
 	@Override
 	public void encode(FriendlyByteBuf buf) {
 		buf.writeLongArray(flags.toLongArray());
+		buf.writeInt(expectedLength);
+		buf.writeInt(expectedHash);
 	}
 
 	public static List<Pair<String, S2CLoginFlag>> generateRegistryPackets(boolean isLocal) {
@@ -35,7 +43,8 @@ public class S2CLoginFlag extends HandshakeMessage {
 
 	@Override
 	public boolean consume(NetworkEvent.Context context, BiConsumer<HandshakeMessage, NetworkEvent.Context> reply) {
-		SyncedFlagHandler.receiveFlagInfoFromServer(flags);
+		if (expectedLength == SyncedFlagHandler.expectedLength() && expectedHash == SyncedFlagHandler.expectedHash())
+			SyncedFlagHandler.receiveFlagInfoFromServer(flags);
 		reply.accept(new C2SLoginFlag(), context);
 		return true;
 	}

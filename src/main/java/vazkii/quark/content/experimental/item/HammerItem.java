@@ -1,9 +1,6 @@
 package vazkii.quark.content.experimental.item;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -14,12 +11,12 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import vazkii.quark.base.item.QuarkItem;
 import vazkii.quark.base.module.QuarkModule;
 import vazkii.quark.content.experimental.module.VariantSelectorModule;
 import vazkii.quark.content.tweaks.module.LockRotationModule;
+
+import javax.annotation.Nonnull;
 
 public class HammerItem extends QuarkItem {
 
@@ -28,7 +25,7 @@ public class HammerItem extends QuarkItem {
 				.stacksTo(1)
 				.tab(CreativeModeTab.TAB_TOOLS));
 	}
-	
+
 	@Nonnull
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
@@ -37,48 +34,57 @@ public class HammerItem extends QuarkItem {
 		BlockPos pos = context.getClickedPos();
 		BlockState state = level.getBlockState(pos);
 		Block block = state.getBlock();
-		
-		String variant = VariantSelectorModule.getSavedVariant(player);
-		Block variantBlock = VariantSelectorModule.getVariantOrOriginal(block, variant);
-		if(variantBlock != null) {
-			BlockPlaceContext bpc = new YungsBetterBlockPlaceContext(context);
-			BlockState place = variantBlock.getStateForPlacement(bpc);
-			place = LockRotationModule.fixBlockRotation(place, bpc);
+
+		if (player != null) {
+			String variant = VariantSelectorModule.getSavedVariant(player);
+			Block variantBlock = VariantSelectorModule.getVariantOrOriginal(block, variant);
 			
-			if(!place.equals(state) && !level.isClientSide) {
+			if (variantBlock != null) {
 				level.removeBlock(pos, false);
-				level.setBlock(pos, place, 1 | 2);
-				player.swing(context.getHand());
 				
-				level.playSound(null, pos, variantBlock.getSoundType(place).getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
+				BlockPlaceContext bpc = new YungsBetterBlockPlaceContext(context);
+				BlockState place = variantBlock.getStateForPlacement(bpc);
+
+				place = LockRotationModule.fixBlockRotation(place, bpc);
+
+				if (place != null && !place.equals(state) && !level.isClientSide) {
+					level.setBlock(pos, place, 1 | 2);
+					player.swing(context.getHand());
+
+					level.playSound(null, pos, place.getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
+				} else {
+					level.setBlock(pos, state, 0);
+				}
+
+				return InteractionResult.SUCCESS;
 			}
-			
-			return InteractionResult.SUCCESS;
 		}
-		
+
 		return InteractionResult.PASS;
 	}
-	
+
 	private static class YungsBetterBlockPlaceContext extends BlockPlaceContext {
 
 		public YungsBetterBlockPlaceContext(UseOnContext ctx) {
 			super(ctx);
 		}
-		
+
 		// vanilla BlockPlaceContext offsets the original clicked pos if replaceClicked is false
 		// so that the block is placed on the edge, but in this case we want to place it in the
 		// same blockpos that was clicked so we do this nonsense
-		
+
+		@Nonnull
 		@Override
 		public BlockPos getClickedPos() {
 			boolean oldRepl = replaceClicked;
+			
 			replaceClicked = true;
 			BlockPos pos = super.getClickedPos();
-			
+
 			replaceClicked = oldRepl;
 			return pos;
 		}
-		
+
 	}
 
 }

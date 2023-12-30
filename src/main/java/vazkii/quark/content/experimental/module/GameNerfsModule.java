@@ -9,12 +9,10 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.gossip.GossipContainer;
 import net.minecraft.world.entity.ai.gossip.GossipType;
 import net.minecraft.world.entity.monster.ZombieVillager;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -28,9 +26,7 @@ import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import vazkii.quark.base.module.LoadModule;
 import vazkii.quark.base.module.ModuleCategory;
@@ -41,6 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 @LoadModule(category = ModuleCategory.EXPERIMENTAL, enabledByDefault = false, hasSubscriptions = true)
 public class GameNerfsModule extends QuarkModule {
@@ -50,6 +47,10 @@ public class GameNerfsModule extends QuarkModule {
 	@Config(description = "Makes Mending act like the Unmending mod\n"
 			+ "https://www.curseforge.com/minecraft/mc-mods/unmending")
 	public static boolean nerfMending = true;
+
+	@Config(name = "No Nerf for Mending II", description = "Makes Mending II still work even if mending is nerfed.\n" +
+		"If you want Mending II, disable the sanity check on Ancient Tomes and add minecraft:mending to the tomes.")
+	public static boolean noNerfForMendingTwo = false;
 
 	@Config(description = "Resets all villager discounts when zombified to prevent reducing prices to ridiculous levels")
 	public static boolean nerfVillagerDiscount = true;
@@ -137,22 +138,17 @@ public class GameNerfsModule extends QuarkModule {
 			event.setResult(Result.DENY);
 	}
 
-	// stolen from King Lemming thanks mate
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void killMending(PlayerXpEvent.PickupXp event) {
-		if(!nerfMending)
-			return;
+	public static Predicate<ItemStack> limitMendingItems(Predicate<ItemStack> base) {
+		if (!staticEnabled || !nerfMending)
+			return base;
 
-		Player player = event.getEntity();
-		ExperienceOrb orb = event.getOrb();
+		if (noNerfForMendingTwo)
+			return (stack) -> base.test(stack) && stack.getEnchantmentLevel(Enchantments.MENDING) > 1;
+		return (stack) -> false;
+	}
 
-		player.takeXpDelay = 2;
-		player.take(orb, 1);
-		if(orb.value > 0)
-			player.giveExperiencePoints(orb.value);
-
-		orb.discard();
-		event.setCanceled(true);
+	private boolean isMending(Map<Enchantment, Integer> enchantments) {
+		return enchantments.containsKey(Enchantments.MENDING) && (!noNerfForMendingTwo || enchantments.get(Enchantments.MENDING) < 2);
 	}
 
 	@SubscribeEvent
@@ -172,7 +168,7 @@ public class GameNerfsModule extends QuarkModule {
 		Map<Enchantment, Integer> enchLeft = EnchantmentHelper.getEnchantments(left);
 		Map<Enchantment, Integer> enchRight = EnchantmentHelper.getEnchantments(right);
 
-		if(enchLeft.containsKey(Enchantments.MENDING) || enchRight.containsKey(Enchantments.MENDING)) {
+		if(isMending(enchLeft) || isMending(enchRight)) {
 			if(left.getItem() == right.getItem())
 				isMended = true;
 
@@ -202,7 +198,8 @@ public class GameNerfsModule extends QuarkModule {
 					}
 				}
 			}
-			enchOutput.remove(Enchantments.MENDING);
+			if (isMending(enchOutput))
+				enchOutput.remove(Enchantments.MENDING);
 
 			EnchantmentHelper.setEnchantments(enchOutput, out);
 

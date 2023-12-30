@@ -1,11 +1,16 @@
 package vazkii.quark.base.network;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.LastSeenMessages;
 import net.minecraft.network.chat.MessageSignature;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.network.HandshakeHandler;
 import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.simple.SimpleChannel;
 import vazkii.arl.network.IMessage;
 import vazkii.arl.network.MessageSerializer;
@@ -20,6 +25,8 @@ import vazkii.quark.base.network.message.structural.*;
 
 import java.time.Instant;
 import java.util.BitSet;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 public final class QuarkNetwork {
 
@@ -64,10 +71,12 @@ public final class QuarkNetwork {
 		network.register(C2SUpdateFlag.class, NetworkDirection.PLAY_TO_SERVER);
 		loginIndexedBuilder(S2CLoginFlag.class, 98, NetworkDirection.LOGIN_TO_CLIENT)
 			.decoder(S2CLoginFlag::new)
+			.consumerNetworkThread(loginPacketHandler())
 			.buildLoginPacketList(S2CLoginFlag::generateRegistryPackets)
 			.add();
 		loginIndexedBuilder(C2SLoginFlag.class, 99, NetworkDirection.LOGIN_TO_SERVER)
 			.decoder(C2SLoginFlag::new)
+			.consumerNetworkThread(loginIndexFirst(loginPacketHandler()))
 			.noResponse()
 			.add();
 	}
@@ -75,26 +84,47 @@ public final class QuarkNetwork {
 	private static <MSG extends HandshakeMessage> SimpleChannel.MessageBuilder<MSG> loginIndexedBuilder(Class<MSG> clazz, int id, NetworkDirection direction) {
 		return network.channel.messageBuilder(clazz, id, direction)
 			.loginIndex(HandshakeMessage::getLoginIndex, HandshakeMessage::setLoginIndex)
-			.encoder(HandshakeMessage::encode)
-			.consumerNetworkThread((msg, context) -> {
-				return msg.consume(context.get(), network.channel::reply);
-			});
+			.encoder(HandshakeMessage::encode);
+	}
+
+	private static <MSG extends HandshakeMessage> BiConsumer<MSG, Supplier<NetworkEvent.Context>> loginPacketHandler() {
+		return (msg, contextSupplier) -> {
+			NetworkEvent.Context context = contextSupplier.get();
+			context.setPacketHandled(msg.consume(context, network.channel::reply));
+		};
+	}
+
+	private static <MSG extends HandshakeMessage> BiConsumer<MSG, Supplier<NetworkEvent.Context>> loginIndexFirst(BiConsumer<MSG, Supplier<NetworkEvent.Context>> toWrap) {
+		return HandshakeHandler.indexFirst((handler, msg, context) -> toWrap.accept(msg, context));
 	}
 
 	public static void sendToPlayer(IMessage msg, ServerPlayer player) {
+		if(network == null)
+			return;
+
 		network.sendToPlayer(msg, player);
 	}
 
+	@OnlyIn(Dist.CLIENT)
 	public static void sendToServer(IMessage msg) {
+		if(network == null || Minecraft.getInstance().getConnection() == null)
+			return;
+
 		network.sendToServer(msg);
 	}
 
 	public static void sendToPlayers(IMessage msg, Iterable<ServerPlayer> players) {
+		if(network == null)
+			return;
+
 		for(ServerPlayer player : players)
 			network.sendToPlayer(msg, player);
 	}
 
 	public static void sendToAllPlayers(IMessage msg, MinecraftServer server) {
+		if(network == null)
+			return;
+
 		sendToPlayers(msg, server.getPlayerList().getPlayers());
 	}
 

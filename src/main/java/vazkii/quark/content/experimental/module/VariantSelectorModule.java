@@ -1,18 +1,24 @@
 package vazkii.quark.content.experimental.module;
 
-import java.util.Arrays;
-
-import org.lwjgl.glfw.GLFW;
-
 import com.mojang.blaze3d.platform.Window;
-
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.util.Either;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,15 +31,20 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent.Key;
+import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL11;
 import vazkii.quark.base.Quark;
 import vazkii.quark.base.client.handler.ModKeybindHandler;
+import vazkii.quark.base.handler.MiscUtil;
 import vazkii.quark.base.module.LoadModule;
 import vazkii.quark.base.module.ModuleCategory;
 import vazkii.quark.base.module.QuarkModule;
@@ -41,8 +52,13 @@ import vazkii.quark.base.module.config.Config;
 import vazkii.quark.base.network.QuarkNetwork;
 import vazkii.quark.base.network.message.experimental.PlaceVariantUpdateMessage;
 import vazkii.quark.content.experimental.client.screen.VariantSelectorScreen;
-import vazkii.quark.content.experimental.config.BlockSuffixConfig;
+import vazkii.quark.content.experimental.client.tooltip.VariantsComponent;
+import vazkii.quark.content.experimental.config.VariantsConfig;
 import vazkii.quark.content.experimental.item.HammerItem;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
 
 @LoadModule(category = ModuleCategory.EXPERIMENTAL, hasSubscriptions = true, enabledByDefault = false,
 		description = "Allows placing variant blocks automatically via a selector menu triggered from a keybind")
@@ -59,12 +75,17 @@ public class VariantSelectorModule extends QuarkModule {
 	@Config(flag = "hammer", description = "Enable the hammer, allowing variants to be swapped between eachother, including the original block. Do this ONLY under the same circumstances as Convert Variant Items.")
 	public static boolean enableHammer = false;
 
+	@Config public static boolean showTooltip = true;
+	@Config public static boolean alignHudToHotbar = false;
+	@Config public static boolean showSimpleHud = false;
+	@Config public static boolean showHud = true;
+	@Config public static boolean enableGreenTint = true;
+	@Config public static boolean overrideHeldItemRender = true;
+	@Config public static int hudOffsetX = 0;
+	@Config public static int hudOffsetY = 0;
+
 	@Config
-	public static BlockSuffixConfig variants = new BlockSuffixConfig(
-			Arrays.asList("slab", "stairs", "fence", "fence_gate", "vertical_slab"),
-			Arrays.asList("quark"),
-			Arrays.asList("wall=fence", "carpet=slab")
-			);
+	public static VariantsConfig variants = new VariantsConfig();
 
 	public static Item hammer;
 
@@ -104,7 +125,7 @@ public class VariantSelectorModule extends QuarkModule {
 	@OnlyIn(Dist.CLIENT)
 	public static void setClientVariant(String variant, boolean sync) {
 		clientVariant = variant;
-		
+
 		if(sync) {
 			if(variant == null)
 				variant = "";
@@ -123,14 +144,13 @@ public class VariantSelectorModule extends QuarkModule {
 	}
 
 	public static Block getVariantForBlock(Block block, String variant) {
-		Block variantBlock = variants.getBlockForVariant(block, variant);
-		if(variantBlock != null)
-			return variantBlock;
-
-		return null;
+		return variants.getBlockForVariant(block, variant);
 	}
 
 	public static Block getVariantOrOriginal(Block block, String variant) {
+		if (!variants.isVariant(block) && !variants.isOriginal(block))
+			return null;
+
 		block = variants.getOriginalBlock(block);
 
 		if(variant == null || variant.isEmpty())
@@ -163,13 +183,44 @@ public class VariantSelectorModule extends QuarkModule {
 			}
 		}
 	}
-	
+
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public void registerClientTooltipComponentFactories(RegisterClientTooltipComponentFactoriesEvent event) {
+		event.register(VariantsComponent.class, Function.identity());
+	}
+
+	@SubscribeEvent
+	@OnlyIn(Dist.CLIENT)
+	public void gatherComponents(RenderTooltipEvent.GatherComponents event) {
+		if(!showTooltip)
+			return;
+
+		ItemStack stack = event.getItemStack();
+
+		if(hasTooltip(stack)) {
+			List<Either<FormattedText, TooltipComponent>> elements = event.getTooltipElements();
+			int index = 1;
+
+			if(Screen.hasShiftDown()) {
+				elements.add(index, Either.left(Component.translatable("quark.misc.variant_tooltip_header").withStyle(ChatFormatting.GRAY)));
+				elements.add(index + 1, Either.right(new VariantsComponent(stack)));
+			}
+			else
+				elements.add(index, Either.left(Component.translatable("quark.misc.variant_tooltip_hold_shift").withStyle(ChatFormatting.GRAY)));
+		}
+	}
+
+	private boolean hasTooltip(ItemStack stack) {
+		return !stack.isEmpty() && stack.getItem() instanceof BlockItem bi && !variants.getAllVariants(bi.getBlock()).isEmpty();
+	}
+
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public void clientTick(ClientTickEvent event) {
 		if(event.phase != Phase.END)
 			return;
-		
+
 		Minecraft mc = Minecraft.getInstance();
 		Level level = mc.level;
 		if(level == null)
@@ -215,11 +266,29 @@ public class VariantSelectorModule extends QuarkModule {
 		return state;
 	}
 
+	@OnlyIn(Dist.CLIENT)
+	public static ItemStack modifyHeldItemStack(AbstractClientPlayer player, ItemStack stack) {
+		if(!staticEnabled || !overrideHeldItemRender)
+			return stack;
+
+		Minecraft mc = Minecraft.getInstance();
+		if(player == mc.player && stack.getItem() instanceof BlockItem bi) {
+			Block block = bi.getBlock();
+			if(clientVariant != null && !clientVariant.isEmpty()) {
+				Block variant = variants.getBlockForVariant(block, clientVariant);
+				if(variant != null && variant != block)
+					return new ItemStack(variant);
+			}
+		}
+
+		return stack;
+	}
+
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public void onRender(RenderGuiOverlayEvent.Pre event) {
 		Minecraft mc = Minecraft.getInstance();
-		if(event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type() || mc.screen instanceof VariantSelectorScreen)
+		if(event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type() || mc.screen instanceof VariantSelectorScreen || !showHud)
 			return;
 
 		Player player = mc.player;
@@ -253,15 +322,56 @@ public class VariantSelectorModule extends QuarkModule {
 				Window window = event.getWindow();
 				int x = window.getGuiScaledWidth() / 2;
 				int y = window.getGuiScaledHeight() / 2 + 12;
-				int pad = 8;
+
+				if(alignHudToHotbar) {
+					HumanoidArm arm = mc.options.mainHand().get();
+					if(arm == HumanoidArm.RIGHT)
+						x += 125;
+					else x -= 93;
+
+					y = window.getGuiScaledHeight() - 19;
+				}
+
+				int offset = 8;
+				int width = 16;
 
 				displayLeft.setCount(1);
 
-				mc.font.draw(event.getPoseStack(), "->", x - 5, y + 5, 0xFFFFFF);
-				mc.getItemRenderer().renderAndDecorateItem(displayLeft, x - 16 - pad, y);
-				mc.getItemRenderer().renderAndDecorateItem(displayRight, x + pad, y);
+				int posX = x - offset - width + hudOffsetX;
+				int posY = y + hudOffsetY;
+
+				if(!showSimpleHud) {
+					mc.getItemRenderer().renderAndDecorateItem(displayLeft, posX, posY);
+
+					RenderSystem.enableBlend();
+					RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+					RenderSystem.setShader(GameRenderer::getPositionTexShader);
+					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 0.75F);
+					RenderSystem.setShaderTexture(0, MiscUtil.GENERAL_ICONS);
+
+					Screen.blit(event.getPoseStack(), posX + 8, posY, 0, 141, 22, 15, 256, 256);
+
+					posX += width * 2;
+				}
+				else {
+					final ResourceLocation WIDGETS_LOCATION = new ResourceLocation("textures/gui/widgets.png");
+
+					if(alignHudToHotbar) {
+						RenderSystem.enableBlend();
+						RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+						RenderSystem.setShader(GameRenderer::getPositionTexShader);
+						if(enableGreenTint)
+							RenderSystem.setShaderColor(0.5F, 1.0F, 0.5F, 1.0F);
+						else
+							RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+						RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
+						Screen.blit(event.getPoseStack(), posX -3, posY -3, 24, 23, 22, 22, 256, 256);
+					} else
+						posX += width;
+				}
+
+				mc.getItemRenderer().renderAndDecorateItem(displayRight, posX , posY);
 			}
 		}
 	}
-
 }

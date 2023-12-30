@@ -1,18 +1,9 @@
 package vazkii.quark.content.tools.item;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.EnchantedBookItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.Level;
@@ -23,6 +14,9 @@ import vazkii.quark.base.item.QuarkItem;
 import vazkii.quark.base.module.QuarkModule;
 import vazkii.quark.content.experimental.module.EnchantmentsBegoneModule;
 import vazkii.quark.content.tools.module.AncientTomesModule;
+
+import javax.annotation.Nonnull;
+import java.util.List;
 
 public class AncientTomeItem extends QuarkItem {
 
@@ -57,7 +51,7 @@ public class AncientTomeItem extends QuarkItem {
 		if (isEnabled() || group == CreativeModeTab.TAB_SEARCH) {
 			if (group == CreativeModeTab.TAB_SEARCH || group.getEnchantmentCategories().length != 0) {
 				ForgeRegistries.ENCHANTMENTS.forEach(ench -> {
-					if (!EnchantmentsBegoneModule.shouldBegone(ench) && ench.getMaxLevel() != 1) {
+					if (!EnchantmentsBegoneModule.shouldBegone(ench) && (!AncientTomesModule.sanityCheck || ench.getMaxLevel() != 1)) {
 						if (!AncientTomesModule.isInitialized() || AncientTomesModule.validEnchants.contains(ench)) {
 							if (group == CreativeModeTab.TAB_SEARCH || group.hasEnchantmentCategory(ench.category)) {
 								items.add(getEnchantedItemStack(ench));
@@ -81,9 +75,9 @@ public class AncientTomeItem extends QuarkItem {
 		Enchantment ench = AncientTomesModule.getTomeEnchantment(stack);
 		if(ench != null)
 			tooltip.add(getFullTooltipText(ench));
-		else 
+		else
 			tooltip.add(Component.translatable("quark.misc.ancient_tome_tooltip_any").withStyle(ChatFormatting.GRAY));
-		
+
 		if(AncientTomesModule.curseGear){
 			tooltip.add(Component.translatable("quark.misc.ancient_tome_tooltip_curse").withStyle(ChatFormatting.RED));
 		}

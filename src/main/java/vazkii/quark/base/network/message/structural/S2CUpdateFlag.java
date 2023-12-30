@@ -10,13 +10,16 @@ import java.util.BitSet;
 public class S2CUpdateFlag implements IMessage {
 
 	@Serial
-	private static final long serialVersionUID = 2346906475290526858L;
+	private static final long serialVersionUID = 5889504104199410797L;
 
 	public BitSet flags;
+	public int expectedLength;
+	public int expectedHash;
 
 	@Override
 	public boolean receive(NetworkEvent.Context context) {
-		SyncedFlagHandler.receiveFlagInfoFromServer(flags);
+		if (expectedLength == SyncedFlagHandler.expectedLength() && expectedHash == SyncedFlagHandler.expectedHash())
+			SyncedFlagHandler.receiveFlagInfoFromServer(flags);
 		return true;
 	}
 
@@ -24,11 +27,13 @@ public class S2CUpdateFlag implements IMessage {
 		// NO-OP
 	}
 
-	private S2CUpdateFlag(BitSet flags) {
+	private S2CUpdateFlag(BitSet flags, int expectedLength, int expectedHash) {
 		this.flags = flags;
+		this.expectedLength = expectedLength;
+		this.expectedHash = expectedHash;
 	}
 
 	public static S2CUpdateFlag createPacket() {
-		return new S2CUpdateFlag(SyncedFlagHandler.compileFlagInfo());
+		return new S2CUpdateFlag(SyncedFlagHandler.compileFlagInfo(), SyncedFlagHandler.expectedLength(), SyncedFlagHandler.expectedHash());
 	}
 }

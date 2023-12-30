@@ -134,7 +134,8 @@ public class ClientProxy extends CommonProxy {
 		super.handleQuarkConfigChange();
 
 		ModuleLoader.INSTANCE.configChangedClient();
-		QuarkNetwork.sendToServer(C2SUpdateFlag.createPacket());
+		if (Minecraft.getInstance().getConnection() != null)
+			QuarkNetwork.sendToServer(C2SUpdateFlag.createPacket());
 		IngameConfigHandler.INSTANCE.refresh();
 
 		Minecraft mc = Minecraft.getInstance();

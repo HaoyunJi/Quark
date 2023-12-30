@@ -57,9 +57,6 @@ public class VariantAnimalTexturesModule extends QuarkModule {
 
 	@Override
 	public void clientSetup() {
-		if(!enabled)
-			return;
-
 		textures = Multimaps.newListMultimap(new EnumMap<>(VariantTextureType.class), ArrayList::new);
 		shinyTextures = new HashMap<>();
 

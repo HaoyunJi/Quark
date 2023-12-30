@@ -22,7 +22,7 @@ public class Quark {
 	public Quark() {
 		instance = this;
 
-		proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+		proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
 		proxy.start();
 	}
 
