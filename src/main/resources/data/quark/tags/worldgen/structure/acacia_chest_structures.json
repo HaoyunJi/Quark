@@ -1,0 +1,18 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:village_savanna",
+    {
+      "id": "mowziesmobs:barakoa_village",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mansion_savanna",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_savanna",
+      "required": false
+    }
+  ]
+}

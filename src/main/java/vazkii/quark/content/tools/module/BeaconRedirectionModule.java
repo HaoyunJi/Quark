@@ -41,48 +41,47 @@ public class BeaconRedirectionModule extends QuarkModule {
 
 	private static final TagKey<Block> BEACON_TRANSPARENT = BlockTags.create(new ResourceLocation("quark:beacon_transparent"));
 
-	@Config 
+	@Config
 	public static int horizontalMoveLimit = 64;
-	
+
 	@Config(flag = "tinted_glass_dims")
 	public static boolean allowTintedGlassTransparency = true;
-	
+
 	@Hint("tinted_glass_dims") Item tinted_glass = Items.TINTED_GLASS;
-	
+
 	public static boolean staticEnabled;
-	
+
 	public static QuarkGenericTrigger redirectTrigger;
-	
+
 	@Override
 	public void register() {
 		redirectTrigger = QuarkAdvancementHandler.registerGenericTrigger("redirect_beacon");
 	}
-	
+
 	@Override
 	public void configChanged() {
 		staticEnabled = enabled;
 	}
-	
+
 	@Override
 	public void addAdditionalHints(BiConsumer<Item, Component> consumer) {
 		final String redirectHint = "beacon_redirect_item";
 		String type = "amethyst";
-		
+
 		if(!ModuleLoader.INSTANCE.isModuleEnabled(CorundumModule.class))
 			HintManager.hintItem(consumer, Items.AMETHYST_CLUSTER, redirectHint);
-		
 		else
 			type = "corundum";
-		
+
 		Component comp = Component.translatable("quark.jei.hint.beacon_redirection", Component.translatable("quark.jei.hint.beacon_" + type));
 		consumer.accept(Items.BEACON, comp);
 	}
-	
+
 	// The value that comes out of this is fed onto a constant for the FOR loop that
 	// computes the beacon segments, so we return 0 to run that code, or MAX_VALUE to not
 	public static int tickBeacon(BeaconBlockEntity beacon) {
 		if(!staticEnabled)
-			return 0; 
+			return 0;
 
 		Level world = beacon.getLevel();
 		BlockPos beaconPos = beacon.getBlockPos();
@@ -93,19 +92,19 @@ public class BeaconRedirectionModule extends QuarkModule {
 
 		boolean broke = false;
 		boolean didRedirection = false;
-		
+
 		beacon.checkingBeamSections.clear();
-		
+
 		float[] currColor = new float[] { 1, 1, 1 };
 		float alpha = 1F;
-		
+
 		Direction lastDir = null;
 		ExtendedBeamSegment currSegment = new ExtendedBeamSegment(Direction.UP, Vec3i.ZERO, currColor, alpha);
 
 		Collection<BlockPos> seenPositions = new HashSet<>();
 		boolean check = true;
 		boolean hardColorSet = false;
-		
+
 		while(world.isInWorldBounds(currPos) && horizontalMoves > 0) {
 			if(currSegment.dir == Direction.UP && currSegment.dir != lastDir) {
 				int heightmapVal = world.getHeight(Heightmap.Types.WORLD_SURFACE, currPos.getX(), currPos.getZ());
@@ -114,10 +113,10 @@ public class BeaconRedirectionModule extends QuarkModule {
 					break;
 				}
 
-					
+
 				lastDir = currSegment.dir;
 			}
-			
+
 			currPos = currPos.relative(currSegment.dir);
 			if(currSegment.dir.getAxis().isHorizontal())
 				horizontalMoves--;
@@ -127,7 +126,7 @@ public class BeaconRedirectionModule extends QuarkModule {
 			Block block = blockstate.getBlock();
 			float[] targetColor = blockstate.getBeaconColorMultiplier(world, currPos, beaconPos);
 			float targetAlpha = -1;
-			
+
 			if(allowTintedGlassTransparency) {
 				if(block == Blocks.TINTED_GLASS)
 					targetAlpha = (alpha < 0.3F ? 0F : (alpha / 2F));
@@ -140,11 +139,11 @@ public class BeaconRedirectionModule extends QuarkModule {
 				else {
 					check = true;
 					beacon.checkingBeamSections.add(currSegment);
-					
+
 					targetColor = getTargetColor(block);
 					if(targetColor[0] == 1F && targetColor[1] == 1F && targetColor[2] == 1F)
 						targetColor = currColor;
-					
+
 					float[] mixedColor = new float[]{(currColor[0] + targetColor[0] * 3) / 4.0F, (currColor[1] + targetColor[1] * 3) / 4.0F, (currColor[2] + targetColor[2] * 3) / 4.0F};
 					currColor = mixedColor;
 					alpha = 1F;
@@ -162,50 +161,50 @@ public class BeaconRedirectionModule extends QuarkModule {
 					float[] mixedColor = currColor;
 					if(targetColor != null) {
 						mixedColor = new float[]{(currColor[0] + targetColor[0]) / 2.0F, (currColor[1] + targetColor[1]) / 2.0F, (currColor[2] + targetColor[2]) / 2.0F};
-						
+
 						if(!hardColorSet) {
 							mixedColor = targetColor;
 							hardColorSet = true;
 						}
-						
+
 						currColor = mixedColor;
 					}
-					
+
 					if(targetAlpha != -1)
 						alpha = targetAlpha;
-					
+
 					lastDir = currSegment.dir;
 					currSegment = new ExtendedBeamSegment(currSegment.dir, currPos.subtract(beaconPos), mixedColor, alpha);
 				}
 			} else {
 				boolean bedrock = blockstate.is(BEACON_TRANSPARENT); //Bedrock blocks don't stop beacon beams
-				
+
 				if(!bedrock && blockstate.getLightBlock(world, currPos) >= 15) {
 					broke = true;
 					break;
 				}
 
 				currSegment.increaseHeight();
-				
+
 				if(bedrock)
 					continue;
 			}
-			
+
 			if(check) {
 				boolean added = seenPositions.add(currPos);
 				if(!added) {
 					broke = true;
 					break;
 				}
-				
+
 			}
 		}
-		
+
 		if(horizontalMoves == 0 || currPos.getY() <= world.getMinBuildHeight())
 			broke = true;
 
-		final String tag = "quark:redirected"; 
-		
+		final String tag = "quark:redirected";
+
 		if(!broke) {
 			beacon.checkingBeamSections.add(currSegment);
 			beacon.lastCheckY = targetHeight + 1;
@@ -215,10 +214,10 @@ public class BeaconRedirectionModule extends QuarkModule {
 			beacon.checkingBeamSections.clear();
 			beacon.lastCheckY = targetHeight;
 		}
-		
+
 		if(!beacon.getPersistentData().getBoolean(tag) && didRedirection && !beacon.checkingBeamSections.isEmpty()) {
 			beacon.getPersistentData().putBoolean(tag, true);
-			
+
 			int i = beaconPos.getX();
 			int j = beaconPos.getY();
 			int k = beaconPos.getZ();
@@ -228,11 +227,11 @@ public class BeaconRedirectionModule extends QuarkModule {
 
 		return Integer.MAX_VALUE;
 	}
-	
+
 	private static boolean isRedirectingBlock(Block block) {
 		return CorundumModule.staticEnabled ? block instanceof CorundumClusterBlock : block == Blocks.AMETHYST_CLUSTER;
 	}
-	
+
 	private static float[] getTargetColor(Block block) {
 		return block instanceof CorundumClusterBlock cc? cc.base.colorComponents : new float[] { 1F, 1F, 1F };
 	}
@@ -242,7 +241,7 @@ public class BeaconRedirectionModule extends QuarkModule {
 		public final Direction dir;
 		public final Vec3i offset;
 		public final float alpha;
-		
+
 		private boolean isTurn = false;
 
 		public ExtendedBeamSegment(Direction dir, Vec3i offset, float[] colorsIn, float alpha) {
@@ -255,20 +254,20 @@ public class BeaconRedirectionModule extends QuarkModule {
 		public void makeTurn() {
 			isTurn = true;
 		}
-		
+
 		public boolean isTurn() {
 			return isTurn;
 		}
-		
+
 		@Override
 		public void increaseHeight() { // increase visibility
 			super.increaseHeight();
 		}
-		
+
 		public void setHeight(int target) {
 			height = target;
 		}
 
 	}
-	
+
 }

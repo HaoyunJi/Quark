@@ -51,7 +51,7 @@ EOF
 								 --arg mcver "${MC_VERSION}" \
 								 --arg changelog "${GH_RELEASE_PAGE}" \
 								 '.name=$ARGS.named.name | .version_number=$ARGS.named.name | .game_versions=[$ARGS.named.mcver] | .changelog=$ARGS.named.changelog')
-	curl --http1.1 'https://api.modrinth.com/v2/version' \
+	curl 'https://api.modrinth.com/v2/version' \
 		 -H "Authorization: $MODRINTH_TOKEN" \
 		 -F "data=$MODRINTH_FORGE_SPEC" \
 		 -F "jar=@${FORGE_JAR}" # TODO modrinth doesn't allow asc files. Remember to readd "signature" to the spec when reenabling this. \ -F "signature=@${FORGE_JAR}.asc"
@@ -71,7 +71,7 @@ function release_curseforge() {
 	# Once with type ID 1 (unused?), once with its major-version-specific type ID, and once with the type ID for "Addons" 615
 	# We want the second one. Just dirtily pluck it out based on this.
 	local CURSEFORGE_GAME_VERSION
-	CURSEFORGE_GAME_VERSION=$(curl --http1.1 https://minecraft.curseforge.com/api/game/versions \
+	CURSEFORGE_GAME_VERSION=$(curl https://minecraft.curseforge.com/api/game/versions \
 								   -H 'Accept: application/json' \
 								   -H "X-Api-Token: ${CURSEFORGE_TOKEN}" | \
 								  jq --arg mcver "${MC_VERSION}" \
@@ -101,8 +101,7 @@ $CURSEFORGE_GAME_VERSION]"
 	curl 'https://minecraft.curseforge.com/api/projects/243121/upload-file' \
 		 -H "X-Api-Token: $CURSEFORGE_TOKEN" \
 		 -F "metadata=$CURSEFORGE_FORGE_SPEC" \
-		 -F "file=@$FORGE_JAR" \
-		 -d ""
+		 -F "file=@$FORGE_JAR"
 	# TODO: Upload the asc as an 'Additional file'
 }
 

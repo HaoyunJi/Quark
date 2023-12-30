@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "repurposed_structures:village_swamp",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_swamp",
+      "required": false
+    }
+  ]
+}

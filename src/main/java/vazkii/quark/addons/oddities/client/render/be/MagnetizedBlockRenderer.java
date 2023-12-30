@@ -39,7 +39,7 @@ public class MagnetizedBlockRenderer implements BlockEntityRenderer<MagnetizedBl
 			BlockPos truepos = tileEntityIn.getBlockPos();
 			BlockPos blockpos = truepos.relative(tileEntityIn.getFacing().getOpposite());
 			BlockState blockstate = tileEntityIn.getMagnetState();
-			if (!blockstate.isAir() && !(tileEntityIn.getProgress(partialTicks) >= 1.0F)) {
+			if (!blockstate.isAir() && (tileEntityIn.getProgress(partialTicks) <= 1.0F)) {
 				BlockEntity subTile = tileEntityIn.getSubTile(tileEntityIn.getBlockPos());
 				Vec3 offset = new Vec3(tileEntityIn.getOffsetX(partialTicks), tileEntityIn.getOffsetY(partialTicks), tileEntityIn.getOffsetZ(partialTicks));
 				if(QuarkPistonBlockEntityRenderer.renderTESafely(world, truepos, blockstate, subTile, tileEntityIn, partialTicks, offset, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn))

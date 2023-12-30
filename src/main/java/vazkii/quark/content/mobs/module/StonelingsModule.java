@@ -73,8 +73,8 @@ public class StonelingsModule extends QuarkModule {
 				.build("stoneling");
 		RegistryHelper.register(stonelingType, "stoneling", Registry.ENTITY_TYPE_REGISTRY);
 
-		EntitySpawnHandler.registerSpawn(this, stonelingType, MobCategory.MONSTER, Type.ON_GROUND, Types.MOTION_BLOCKING_NO_LEAVES, Stoneling::spawnPredicate, spawnConfig);
-		EntitySpawnHandler.addEgg(stonelingType, 0xA1A1A1, 0x505050, spawnConfig);
+		EntitySpawnHandler.registerSpawn(stonelingType, MobCategory.MONSTER, Type.ON_GROUND, Types.MOTION_BLOCKING_NO_LEAVES, Stoneling::spawnPredicate, spawnConfig);
+		EntitySpawnHandler.addEgg(this, stonelingType, 0xA1A1A1, 0x505050, spawnConfig);
 
 		EntityAttributeHandler.put(stonelingType, Stoneling::prepareAttributes);
 	}

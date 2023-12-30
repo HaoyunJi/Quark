@@ -1,13 +1,6 @@
 package vazkii.quark.addons.oddities.module;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-
 import com.google.common.collect.Lists;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -51,6 +44,12 @@ import vazkii.quark.base.module.LoadModule;
 import vazkii.quark.base.module.ModuleCategory;
 import vazkii.quark.base.module.QuarkModule;
 import vazkii.quark.base.module.config.Config;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 @LoadModule(category = ModuleCategory.ODDITIES, hasSubscriptions = true)
 public class MatrixEnchantingModule extends QuarkModule {
@@ -111,7 +110,7 @@ public class MatrixEnchantingModule extends QuarkModule {
 
 	@Config(description = "Matrix Enchanting can be done with short (<= 3px blocks) instead of air around the enchanting table. Set this to false to disable this behaviour.")
 	public static boolean allowShortBlockEnchanting = true;
-	
+
 	@Config(description = "Candles with soul sand below them or below the bookshelves dampen enchantments instead of influence them.")
 	public static boolean soulCandlesInvert = true;
 
@@ -155,14 +154,14 @@ public class MatrixEnchantingModule extends QuarkModule {
 	@Config(description = "How much each candle influences an enchantment. This works as a multiplier to its weight")
 	public static double influencePower = 0.125;
 
-	@Config(description = "If you set this to false, the vanilla Enchanting Table will no longer automatically convert to the Matrix Enchanting table. You'll have to add a recipe for the Matrix Enchanting Table to make use of this.")
+	@Config(description = "If you set this to false, the vanilla Enchanting Table will no longer automatically convert to the Matrix Enchanting table. You'll have to add a recipe for the Matrix Enchanting Table to make use of this.", flag = "matrix_enchanting_autoconvert")
 	public static boolean automaticallyConvert = true;
 
 	public static Map<DyeColor, Influence> candleInfluences;
 	public static Map<BlockState, CustomInfluence> customInfluences;
 
 	public static Block matrixEnchanter;
-	
+
 	public static QuarkGenericTrigger influenceTrigger;
 
 	@Override
@@ -174,10 +173,10 @@ public class MatrixEnchantingModule extends QuarkModule {
 
 		blockEntityType = BlockEntityType.Builder.of(MatrixEnchantingTableBlockEntity::new, matrixEnchanter).build(null);
 		RegistryHelper.register(blockEntityType, "matrix_enchanting", Registry.BLOCK_ENTITY_TYPE_REGISTRY);
-		
+
 		influenceTrigger = QuarkAdvancementHandler.registerGenericTrigger("influence");
 	}
-	
+
 	@Override
 	public void addAdditionalHints(BiConsumer<Item, Component> consumer) {
 		MutableComponent comp = Component.translatable("quark.jei.hint.matrix_enchanting");

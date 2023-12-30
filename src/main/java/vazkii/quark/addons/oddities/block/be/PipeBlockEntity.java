@@ -176,6 +176,7 @@ public class PipeBlockEntity extends SimpleInventoryBlockEntity {
 
 	public boolean passIn(ItemStack stack, Direction face, Direction backlog, long seed, int time) {
 		PipeItem item = new PipeItem(stack, face, seed);
+		item.lastTickUpdated = level.getGameTime();
 		item.backloggedFace = backlog;
 		if (!iterating) {
 			int currentOut = getComparatorOutput();
@@ -467,6 +468,8 @@ public class PipeBlockEntity extends SimpleInventoryBlockEntity {
 		public int timeInWorld = 0;
 		public boolean valid = true;
 
+		protected long lastTickUpdated = 0;
+
 		public PipeItem(ItemStack stack, Direction face, long rngSeed) {
 			this.stack = stack;
 			ticksInPipe = 0;
@@ -475,16 +478,21 @@ public class PipeBlockEntity extends SimpleInventoryBlockEntity {
 		}
 
 		protected boolean tick(PipeBlockEntity pipe) {
-			ticksInPipe++;
-			timeInWorld++;
+			long gameTime = pipe.level.getGameTime();
+			if (lastTickUpdated != gameTime) {
+				lastTickUpdated = gameTime;
 
-			if (ticksInPipe == PipesModule.effectivePipeSpeed / 2 - 1) {
-				outgoingFace = getTargetFace(pipe);
-			}
+				ticksInPipe++;
+				timeInWorld++;
 
-			if (outgoingFace == null) {
-				valid = false;
-				return true;
+				if (ticksInPipe == PipesModule.effectivePipeSpeed / 2 - 1) {
+					outgoingFace = getTargetFace(pipe);
+				}
+
+				if (outgoingFace == null) {
+					valid = false;
+					return true;
+				}
 			}
 
 			return ticksInPipe >= PipesModule.effectivePipeSpeed;

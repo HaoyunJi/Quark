@@ -1,0 +1,23 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:ocean_ruin",
+    "minecraft:monument",
+    {
+      "id": "repurposed_structures:ancient_city_ocean",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_ocean",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_ocean",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:temple_ocean",
+      "required": false
+    }
+  ]
+}

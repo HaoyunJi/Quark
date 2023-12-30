@@ -4,6 +4,13 @@
     "particle": "quark:model/tiny_potato/bob",
     "all": "quark:model/tiny_potato/bob"
   },
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [ -39, 148, 4 ],
+      "translation": [ 0.5, 3.8, 0 ],
+      "scale": [ 0.40, 0.40, 0.40 ]
+    }
+  },
   "elements": [
     {
       "from": [

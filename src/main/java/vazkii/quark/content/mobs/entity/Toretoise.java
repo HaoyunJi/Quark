@@ -146,11 +146,11 @@ public class Toretoise extends Animal {
 	@Override
 	protected AABB makeBoundingBox() {
 		AABB aabb = super.makeBoundingBox();
-		
+
 		double rheight = getOreType() == 0 ? 0 : 0.4;
 		return new AABB(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY + rheight, aabb.maxZ);
 	}
-	
+
 	@Override
 	public void tick() {
 		super.tick();
@@ -246,7 +246,7 @@ public class Toretoise extends Animal {
 					if (living instanceof Player player)
 						lootBuilder.withLuck(player.getLuck());
 					dropOre(ore, lootBuilder);
-					
+
 					if(living instanceof ServerPlayer sp) {
 						ToretoiseModule.mineToretoiseTrigger.trigger(sp);
 						if(isTamed)
@@ -287,6 +287,7 @@ public class Toretoise extends Animal {
 		}
 
 		entityData.set(ORE_TYPE, 0);
+		this.setBoundingBox(this.makeBoundingBox());
 	}
 
 	@Override
@@ -318,6 +319,7 @@ public class Toretoise extends Animal {
 		if (getOreType() == 0 && (natural || level.random.nextInt(ToretoiseModule.regrowChance) == 0)) {
 			int ore = random.nextInt(ORE_TYPES) + 1;
 			entityData.set(ORE_TYPE, ore);
+			this.setBoundingBox(this.makeBoundingBox());
 
 			if (!natural) {
 				eatCooldown = ToretoiseModule.cooldownTicks;

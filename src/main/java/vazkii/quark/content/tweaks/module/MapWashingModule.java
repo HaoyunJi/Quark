@@ -9,7 +9,7 @@ import vazkii.quark.base.module.LoadModule;
 import vazkii.quark.base.module.ModuleCategory;
 import vazkii.quark.base.module.QuarkModule;
 
-@LoadModule(category = ModuleCategory.TWEAKS)
+@LoadModule(category = ModuleCategory.TWEAKS, antiOverlap = "supplementaries")
 public class MapWashingModule extends QuarkModule {
 	private final CauldronInteraction WASHING_MAP = (state, level, pos, player, hand, stack) -> {
 		if (!enabled)

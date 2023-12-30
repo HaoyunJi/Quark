@@ -10,11 +10,9 @@
  */
 package vazkii.quark.content.mobs.entity;
 
-import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -38,10 +36,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Bucketable;
+import net.minecraft.world.entity.animal.axolotl.Axolotl;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -59,6 +57,7 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.network.NetworkHooks;
+import vazkii.quark.base.Quark;
 import vazkii.quark.base.handler.QuarkSounds;
 import vazkii.quark.content.mobs.ai.RaveGoal;
 import vazkii.quark.content.mobs.module.CrabsModule;
@@ -115,7 +114,7 @@ public class Crab extends Animal implements IEntityAdditionalSpawnData, Bucketab
 		CompoundTag tag = stack.getOrCreateTag();
 
 		if (noSpike) tag.putBoolean("NoSpike", true);
-		tag.putInt("Variant", getVariant());
+		tag.putInt(Axolotl.VARIANT_TAG, getVariant());
 	}
 
 	@Override
@@ -124,7 +123,7 @@ public class Crab extends Animal implements IEntityAdditionalSpawnData, Bucketab
 		Bucketable.loadDefaultDataFromBucketTag(this, tag);
 
 		if (tag.contains("NoSpike")) noSpike = tag.getBoolean("NoSpike");
-		if (tag.contains("Variant", Tag.TAG_ANY_NUMERIC)) entityData.set(VARIANT, tag.getInt("Variant"));
+		entityData.set(VARIANT, tag.getInt(Axolotl.VARIANT_TAG));
 	}
 
 	@Nonnull
@@ -403,10 +402,8 @@ public class Crab extends Animal implements IEntityAdditionalSpawnData, Bucketab
 
 	private Ingredient getTemptationItems() {
 		if(temptationItems == null)
-			temptationItems = Ingredient.merge(Lists.newArrayList(
-					Ingredient.of(Items.WHEAT, Items.CHICKEN),
-					Ingredient.of(ItemTags.FISHES)
-					));
+			temptationItems = Ingredient.of(
+					ItemTags.create(new ResourceLocation(Quark.MOD_ID, "crab_tempt_items")));
 
 		return temptationItems;
 	}

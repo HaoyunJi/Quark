@@ -1,9 +1,5 @@
 package vazkii.quark.base.handler;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Function;
-
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -17,6 +13,10 @@ import vazkii.quark.base.block.QuarkSlabBlock;
 import vazkii.quark.base.block.QuarkStairsBlock;
 import vazkii.quark.base.block.QuarkWallBlock;
 import vazkii.quark.base.handler.RenderLayerHandler.RenderTypeSkeleton;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Function;
 
 public class VariantHandler {
 
@@ -37,17 +37,17 @@ public class VariantHandler {
 	}
 
 	public static IQuarkBlock addSlab(IQuarkBlock block) {
-		SLABS.add(new QuarkSlabBlock(block));
+		SLABS.add(new QuarkSlabBlock(block).setCondition(block::doesConditionApply));
 		return block;
 	}
 
 	public static IQuarkBlock addStairs(IQuarkBlock block) {
-		STAIRS.add(new QuarkStairsBlock(block));
+		STAIRS.add(new QuarkStairsBlock(block).setCondition(block::doesConditionApply));
 		return block;
 	}
 
 	public static IQuarkBlock addWall(IQuarkBlock block) {
-		WALLS.add(new QuarkWallBlock(block));
+		WALLS.add(new QuarkWallBlock(block).setCondition(block::doesConditionApply));
 		return block;
 	}
 

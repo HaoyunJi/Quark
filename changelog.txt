@@ -1,3 +1,2 @@
-- Fixed crash with Rubidium
-- Fixed having pat all mobs enabled toggling sitting
-- Optimized item share packet size
+- Fixed hammer losing variant info when switching block
+- Fixed hammer on slabs making double slabs

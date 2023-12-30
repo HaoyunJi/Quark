@@ -1,0 +1,59 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:mansion",
+    "minecraft:pillager_outpost",
+    {
+      "id": "conjurer_illager:theatre",
+      "required": false
+    },
+    {
+      "id": "illagers_plus:illager_archer_tower",
+      "required": false
+    },
+    {
+      "id": "illagers_plus:illager_centre",
+      "required": false
+    },
+    {
+      "id": "illagers_plus:illager_fort",
+      "required": false
+    },
+    {
+      "id": "illagers_plus:illager_tower",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:bastion_underground",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_dark_forest",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:outpost_badlands",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_badlands",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_dark_forest",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:village_badlands",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:village_dark_forest",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:witch_hut_dark_forest",
+      "required": false
+    }
+  ]
+}

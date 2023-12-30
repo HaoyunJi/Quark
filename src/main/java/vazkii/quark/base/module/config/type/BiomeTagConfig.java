@@ -5,6 +5,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
+import vazkii.quark.base.module.QuarkModule;
 import vazkii.quark.base.module.config.Config;
 import vazkii.quark.base.module.config.ConfigFlagManager;
 
@@ -63,7 +64,7 @@ public class BiomeTagConfig extends AbstractConfigType implements IBiomeConfig {
 	}
 
 	@Override
-	public void onReload(ConfigFlagManager flagManager) {
+	public void onReload(QuarkModule module, ConfigFlagManager flagManager) {
 		synchronized (mutex) {
 			updateTypes();
 		}

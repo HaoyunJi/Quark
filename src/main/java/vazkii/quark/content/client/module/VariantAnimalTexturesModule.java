@@ -1,32 +1,14 @@
 package vazkii.quark.content.client.module;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
-
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Bee;
-import net.minecraft.world.entity.animal.Chicken;
-import net.minecraft.world.entity.animal.Cow;
-import net.minecraft.world.entity.animal.Dolphin;
-import net.minecraft.world.entity.animal.Pig;
-import net.minecraft.world.entity.animal.Rabbit;
+import net.minecraft.world.entity.animal.*;
 import net.minecraft.world.entity.animal.horse.Llama;
 import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.level.Level;
@@ -39,6 +21,10 @@ import vazkii.quark.base.module.LoadModule;
 import vazkii.quark.base.module.ModuleCategory;
 import vazkii.quark.base.module.QuarkModule;
 import vazkii.quark.base.module.config.Config;
+
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Supplier;
 
 @LoadModule(category = ModuleCategory.CLIENT, hasSubscriptions = true, subscribeOn = Dist.CLIENT)
 public class VariantAnimalTexturesModule extends QuarkModule {
@@ -71,9 +57,6 @@ public class VariantAnimalTexturesModule extends QuarkModule {
 
 	@Override
 	public void clientSetup() {
-		if(!enabled)
-			return;
-
 		textures = Multimaps.newListMultimap(new EnumMap<>(VariantTextureType.class), ArrayList::new);
 		shinyTextures = new HashMap<>();
 
@@ -139,7 +122,7 @@ public class VariantAnimalTexturesModule extends QuarkModule {
 			return null;
 		return VariantAnimalTexturesModule.getTextureOrShiny(entity, VariantTextureType.DOLPHIN, () -> null);
 	}
-	
+
 	@Nullable
 	@OnlyIn(Dist.CLIENT)
 	public static ResourceLocation getSlimeTexture(Slime entity) {
@@ -147,7 +130,7 @@ public class VariantAnimalTexturesModule extends QuarkModule {
 			return null;
 		return VariantAnimalTexturesModule.getTextureOrShiny(entity, VariantTextureType.SLIME, () -> null);
 	}
-	
+
 	private static final List<String> BEE_VARIANTS = List.of(
 			"acebee", "agenbee", "arobee", "beefluid", "beesexual",
 			"beequeer", "enbee", "gaybee", "interbee", "lesbeean",
@@ -201,8 +184,17 @@ public class VariantAnimalTexturesModule extends QuarkModule {
 		return null;
 	}
 
+	public static boolean enabled() {
+		return isEnabled;
+	}
+
+	public static boolean isShiny(UUID id) {
+		long most = id.getMostSignificantBits();
+		return shinyAnimalChance > 0 && most % shinyAnimalChance == 0;
+	}
+
 	@OnlyIn(Dist.CLIENT)
-	public static boolean isShiny(Entity e) {
+	public static boolean isSparkly(Entity e) {
 		EntityType<?> type = e.getType();
 		if ((type != EntityType.COW || !enableCow) &&
 				(type != EntityType.PIG || !enablePig) &&
@@ -212,9 +204,7 @@ public class VariantAnimalTexturesModule extends QuarkModule {
 				(type != EntityType.DOLPHIN || !enableShinyDolphin))
 			return false;
 
-		UUID id = e.getUUID();
-		long most = id.getMostSignificantBits();
-		return shinyAnimalChance > 0 && most % shinyAnimalChance == 0;
+		return isShiny(e.getUUID());
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -225,7 +215,7 @@ public class VariantAnimalTexturesModule extends QuarkModule {
 		LivingEntity entity = event.getEntity();
 		Level level = entity.getLevel();
 		if (level.isClientSide() && level.getGameTime() % 10 == 0) {
-			if (isShiny(entity)) {
+			if (isSparkly(entity)) {
 				double angle = Math.random() * 2 * Math.PI;
 				double dist = Math.random() * 0.5 + 0.25;
 				double dX = Math.cos(angle) * dist;
@@ -243,9 +233,7 @@ public class VariantAnimalTexturesModule extends QuarkModule {
 
 	@OnlyIn(Dist.CLIENT)
 	public static ResourceLocation getTextureOrShiny(Entity e, VariantTextureType type, Supplier<ResourceLocation> nonShiny) {
-		UUID id = e.getUUID();
-		long most = id.getMostSignificantBits();
-		if(shinyAnimalChance > 0 && (most % shinyAnimalChance) == 0)
+		if(isShiny(e.getUUID()))
 			return shinyTextures.get(type);
 
 		return nonShiny.get();

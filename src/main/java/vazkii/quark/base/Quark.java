@@ -13,17 +13,17 @@ public class Quark {
 
 	public static final String MOD_ID = "quark";
 	public static final String ODDITIES_ID = "quarkoddities";
-	
+
 	public static Quark instance;
 	public static CommonProxy proxy;
 
 	public static final Logger LOG = LogManager.getLogger(MOD_ID);
-	
+
 	public Quark() {
 		instance = this;
-		
+
 		proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> CommonProxy::new);
 		proxy.start();
 	}
-	
+
 }

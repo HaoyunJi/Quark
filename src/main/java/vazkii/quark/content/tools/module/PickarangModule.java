@@ -27,7 +27,6 @@ import vazkii.quark.base.module.ModuleCategory;
 import vazkii.quark.base.module.QuarkModule;
 import vazkii.quark.base.module.config.Config;
 import vazkii.quark.base.module.hint.Hint;
-import vazkii.quark.content.building.client.render.entity.GlassItemFrameRenderer;
 import vazkii.quark.content.tools.client.render.entity.PickarangRenderer;
 import vazkii.quark.content.tools.config.PickarangType;
 import vazkii.quark.content.tools.entity.rang.AbstractPickarang;

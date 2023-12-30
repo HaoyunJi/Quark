@@ -14,7 +14,7 @@
     },
     "ambientocclusion": false,
     "textures": {
-        "particle": "#particle"
+        "particle": "#texture"
     },
     "elements": [
         {   "from": [ 6, 0, 6 ],

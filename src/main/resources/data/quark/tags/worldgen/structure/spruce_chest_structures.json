@@ -1,0 +1,124 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:igloo",
+    "minecraft:village_snowy",
+    "minecraft:village_taiga",
+    {
+      "id": "dungeons_plus:snowy_temple",
+      "required": false
+    },
+    {
+      "id": "hunterillager:hunterhouse",
+      "required": false
+    },
+    {
+      "id": "stoneholm:underground_village",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:igloo_stone",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mansion_snowy",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mansion_taiga",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_icy",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_stone",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_taiga",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:monument_icy",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:outpost_giant_tree_taiga",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:outpost_icy",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:outpost_snowy",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:outpost_taiga",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_giant_tree_taiga",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_icy",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_snowy",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:ruins_land_icy",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:temple_taiga",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:village_giant_taiga",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:village_mountains",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:village_ocean",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:witch_hut_giant_tree_taiga",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:witch_hut_taiga",
+      "required": false
+    },
+    {
+      "id": "valhelsia_structures:castle",
+      "required": false
+    },
+    {
+      "id": "valhelsia_structures:desert_house",
+      "required": false
+    },
+    {
+      "id": "valhelsia_structures:forge",
+      "required": false
+    },
+    {
+      "id": "valhelsia_structures:tower_ruin",
+      "required": false
+    },
+    {
+      "id": "valhelsia_structures:witch_hut",
+      "required": false
+    }
+  ]
+}

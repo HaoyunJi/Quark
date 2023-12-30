@@ -30,6 +30,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.GoalSelector;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -56,7 +59,6 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
@@ -70,12 +72,7 @@ import vazkii.quark.content.experimental.module.EnchantmentsBegoneModule;
 import vazkii.quark.mixin.accessor.AccessorLootTable;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @EventBusSubscriber(modid = Quark.MOD_ID)
@@ -103,6 +100,37 @@ public class MiscUtil {
 			case WEST -> BlockStateProperties.WEST;
 			case EAST -> BlockStateProperties.EAST;
 		};
+	}
+
+	/**
+	 * Reconstructs the goal selector's list to add in a new goal.
+	 *
+	 * This is because vanilla doesn't play it safe around CMEs with skeletons.
+	 * See: https://github.com/VazkiiMods/Quark/issues/4356
+	 *
+	 * If a Skeleton is killed with Thorns damage and drops its weapon, it will reassess its goals.
+	 * Because the thorns damage is being dealt during goal execution of the MeleeAttackGoal or RangedBowAttackGoal,
+	 * this will cause a CME if the attack goal is not the VERY LAST goal in the set.
+	 *
+	 * Thankfully, the set GoalSelector uses is Linked, so we can just reconstruct the set and avoid the problem.
+	 */
+	public static void addGoalJustAfterLatestWithPriority(GoalSelector selector, int priority, Goal goal) {
+		Set<WrappedGoal> allGoals = new LinkedHashSet<>(selector.getAvailableGoals());
+		WrappedGoal latestWithPriority = null;
+		for (WrappedGoal wrappedGoal : allGoals) {
+			if (wrappedGoal.getPriority() == priority)
+				latestWithPriority = wrappedGoal;
+		}
+
+		selector.removeAllGoals();
+		if (latestWithPriority == null)
+			selector.addGoal(priority, goal);
+
+		for (WrappedGoal wrappedGoal : allGoals) {
+			selector.addGoal(wrappedGoal.getPriority(), wrappedGoal.getGoal());
+			if (wrappedGoal == latestWithPriority)
+				selector.addGoal(priority, goal);
+		}
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -149,25 +177,6 @@ public class MiscUtil {
 
 	public static void damageStack(Player player, InteractionHand hand, ItemStack stack, int dmg) {
 		stack.hurtAndBreak(dmg, player, (p) -> p.broadcastBreakEvent(hand));
-	}
-
-	public static <T, V> void editFinalField(Class<T> clazz, String fieldName, Object obj, V value) {
-		Field f = ObfuscationReflectionHelper.findField(clazz, fieldName);
-		editFinalField(f, obj, value);
-	}
-
-	public static <T> void editFinalField(Field f, Object obj, T value) {
-		try {
-			f.setAccessible(true);
-
-			Field modifiers = Field.class.getDeclaredField("modifiers");
-			modifiers.setAccessible(true);
-			modifiers.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-
-			f.set(obj, value);
-		} catch(ReflectiveOperationException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public static void initializeEnchantmentList(Iterable<String> enchantNames, List<Enchantment> enchants) {
@@ -327,7 +336,7 @@ public class MiscUtil {
 				"-FCYE87P5L0","mybsDDymrsc","6a4BWpBJppI","thpTOAS1Vgg","ZNcBZM5SvbY","_qJEoSa3Ie0",
 				"RWeyOyY_puQ","VBbeuXW8Nko","LIDe-yTxda0","BVVfMFS3mgc","m5qwcYL8a0o","UkY8HvgvBJ8",
 				"4K4b9Z9lSwc","tyInv6RWL0Q","tIWpr3tHzII","AFJPFfnzZ7w","846cjX0ZTrk","XEOCbFJjRw0",
-				"GEo5bmUKFvI","b6li05zh3Kg", "_EEo-iE5u_A", "SPYX2y4NzTU"
+				"GEo5bmUKFvI","b6li05zh3Kg","_EEo-iE5u_A","SPYX2y4NzTU","UDxID0_A9x4","ZBl48MK17cI" 
 		};
 		final int[] keys = new int[] { 265, 265, 264, 264, 263, 262, 263, 262, 66, 65 };
 		if(event.getScreen() instanceof AbstractQScreen) {

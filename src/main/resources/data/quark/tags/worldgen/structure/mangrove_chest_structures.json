@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "repurposed_structures:igloo_mangrove",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mansion_mangrove",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:outpost_mangrove",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:witch_hut_mangrove",
+      "required": false
+    }
+  ]
+}

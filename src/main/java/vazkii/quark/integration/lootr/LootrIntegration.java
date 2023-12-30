@@ -55,10 +55,10 @@ public class LootrIntegration implements ILootrIntegration {
 	@Override
 	public void postRegister() {
 		chestTEType = registerChests(LootrVariantChestBlockEntity::new, () -> chestTEType,
-			LootrVariantChestBlock::new, LootrVariantChestBlock.Compat::new,
+			LootrVariantChestBlock::new, LootrVariantChestBlock.Compat::new, null,
 			allChests::addAll, chests::addAll);
 		trappedChestTEType = registerChests(LootrVariantTrappedChestBlockEntity::new, () -> trappedChestTEType,
-			LootrVariantTrappedChestBlock::new, LootrVariantTrappedChestBlock.Compat::new,
+			LootrVariantTrappedChestBlock::new, LootrVariantTrappedChestBlock.Compat::new, null,
 			allChests::addAll, trappedChests::addAll);
 
 		for (int i = 0; i < chests.size(); i++) {

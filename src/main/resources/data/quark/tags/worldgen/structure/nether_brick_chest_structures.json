@@ -1,0 +1,50 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:fortress",
+    {
+      "id": "betterfortresses:fortress",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:ancient_city_nether",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:city_nether",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_nether",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:monument_nether",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_nether",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:ruins_nether",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:shipwreck_nether_bricks",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:stronghold_nether",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:temple_nether_basalt",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:temple_nether_wasteland",
+      "required": false
+    }
+  ]
+}

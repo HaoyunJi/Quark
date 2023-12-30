@@ -21,6 +21,7 @@ import vazkii.quark.base.capability.CapabilityHandler;
 import vazkii.quark.base.handler.*;
 import vazkii.quark.base.module.ModuleLoader;
 import vazkii.quark.base.module.config.IConfigCallback;
+import vazkii.quark.base.module.sync.SyncedFlagHandler;
 import vazkii.quark.base.network.QuarkNetwork;
 import vazkii.quark.base.recipe.*;
 import vazkii.quark.base.world.EntitySpawnHandler;
@@ -103,6 +104,7 @@ public class CommonProxy {
 	public void handleQuarkConfigChange() {
 		ModuleLoader.INSTANCE.configChanged();
 		EntitySpawnHandler.refresh();
+		SyncedFlagHandler.sendFlagInfoToPlayers();
 	}
 
 	/**

@@ -1,12 +1,6 @@
 package vazkii.quark.addons.oddities.block.be;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -29,6 +23,11 @@ import vazkii.quark.addons.oddities.module.TinyPotatoModule;
 import vazkii.quark.addons.oddities.util.TinyPotatoInfo;
 import vazkii.quark.base.handler.MiscUtil;
 import vazkii.quark.base.handler.QuarkSounds;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TinyPotatoBlockEntity extends SimpleInventoryBlockEntity implements Nameable {
 	public static final String TAG_NAME = "name";
@@ -57,10 +56,14 @@ public class TinyPotatoBlockEntity extends SimpleInventoryBlockEntity implements
 		GENDER.put("nonbinarytater", "child");
 		GENDER.put("robotater", "child");
 		GENDER.put("wiretater", "child");
+		GENDER.put("eutrotater", "child");
+		GENDER.put("bob", "child");
+		GENDER.put("snences", "child");
 
 		GENDER.put("genderfluidtater", "child");
-		GENDER.put("tategg", "child");
 		GENDER.put("taterfluid", "child");
+		GENDER.put("eggtater", "child");
+		GENDER.put("tategg", "child");
 		GENDER.put("transtater", "child");
 
 		GENDER.put("manytater", "children");
@@ -68,7 +71,10 @@ public class TinyPotatoBlockEntity extends SimpleInventoryBlockEntity implements
 		GENDER.put("snorps", "children");
 		GENDER.put("systater", "children");
 		GENDER.put("systemtater", "children");
-		
+
+		// The best gender
+		GENDER.put("tomater", "tomato");
+
 		SOUNDS.put("shia labeouf", QuarkSounds.BLOCK_POTATO_DO_IT);
 		SOUNDS.put("joe biden", QuarkSounds.BLOCK_POTATO_SODA);
 		SOUNDS.put("yungnickyoung", QuarkSounds.BLOCK_POTATO_YUNG);
@@ -106,7 +112,7 @@ public class TinyPotatoBlockEntity extends SimpleInventoryBlockEntity implements
 
 				String checkName = info.name().toLowerCase().trim();
 				if (SOUNDS.containsKey(checkName) && soundCd == 0) {
-					SoundEvent playSound = SOUNDS.get(checkName);	
+					SoundEvent playSound = SOUNDS.get(checkName);
 					soundCd = 20;
 					level.playSound(null, worldPosition, playSound, SoundSource.BLOCKS, 1F, 1F);
 				}
@@ -127,7 +133,7 @@ public class TinyPotatoBlockEntity extends SimpleInventoryBlockEntity implements
 			}
 			if (!tater.isEmpty()) {
 				String taterGender = manyTater ? "children" : "son";
-				if (tater.hasCustomHoverName()) {
+				if (tater.hasCustomHoverName() && !manyTater) {
 					TinyPotatoInfo info = TinyPotatoInfo.fromComponent(tater.getHoverName());
 					taterGender = GENDER.getOrDefault(info.name(), taterGender);
 				}

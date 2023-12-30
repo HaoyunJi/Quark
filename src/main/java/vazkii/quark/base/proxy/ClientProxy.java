@@ -28,6 +28,8 @@ import vazkii.quark.base.handler.RenderLayerHandler;
 import vazkii.quark.base.handler.WoodSetHandler;
 import vazkii.quark.base.module.ModuleLoader;
 import vazkii.quark.base.module.config.IConfigCallback;
+import vazkii.quark.base.network.QuarkNetwork;
+import vazkii.quark.base.network.message.structural.C2SUpdateFlag;
 import vazkii.quark.mixin.client.accessor.AccessorMultiPlayerGameMode;
 
 import java.io.File;
@@ -72,6 +74,8 @@ public class ClientProxy extends CommonProxy {
 		bus.addListener(this::registerKeybinds);
 		bus.addListener(this::registerAdditionalModels);
 		bus.addListener(this::registerClientTooltipComponentFactories);
+		bus.addListener(this::registerItemColors);
+		bus.addListener(this::registerBlockColors);
 	}
 
 	public void clientSetup(FMLClientSetupEvent event) {
@@ -115,11 +119,23 @@ public class ClientProxy extends CommonProxy {
 		ModuleLoader.INSTANCE.registerClientTooltipComponentFactories(event);
 	}
 
+	@OnlyIn(Dist.CLIENT)
+	public void registerItemColors(RegisterColorHandlersEvent.Item event) {
+		ModuleLoader.INSTANCE.registerItemColors(event);
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+		ModuleLoader.INSTANCE.registerBlockColors(event);
+	}
+
 	@Override
 	public void handleQuarkConfigChange() {
 		super.handleQuarkConfigChange();
 
 		ModuleLoader.INSTANCE.configChangedClient();
+		if (Minecraft.getInstance().getConnection() != null)
+			QuarkNetwork.sendToServer(C2SUpdateFlag.createPacket());
 		IngameConfigHandler.INSTANCE.refresh();
 
 		Minecraft mc = Minecraft.getInstance();

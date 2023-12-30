@@ -1,13 +1,8 @@
 package vazkii.quark.content.tweaks.module;
 
-import java.util.List;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,6 +36,7 @@ import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.apache.commons.lang3.tuple.Pair;
 import vazkii.quark.base.Quark;
 import vazkii.quark.base.handler.RayTraceHandler;
 import vazkii.quark.base.module.LoadModule;
@@ -49,6 +45,8 @@ import vazkii.quark.base.module.QuarkModule;
 import vazkii.quark.base.module.config.Config;
 import vazkii.quark.base.module.config.type.inputtable.RGBColorConfig;
 import vazkii.quark.integration.claim.IClaimIntegration;
+
+import java.util.List;
 
 @LoadModule(category = ModuleCategory.TWEAKS, hasSubscriptions = true)
 public class ReacharoundPlacingModule extends QuarkModule {
@@ -77,7 +75,7 @@ public class ReacharoundPlacingModule extends QuarkModule {
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
 	public void onRender(RenderGuiOverlayEvent.Pre event) {
-		if(event.getOverlay() == VanillaGuiOverlay.CROSSHAIR.type())
+		if(event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
 			return;
 
 		Minecraft mc = Minecraft.getInstance();

@@ -33,7 +33,7 @@ public class ConfigResolver {
 
     private final ConfigFlagManager flagManager;
 
-    private List<Runnable> refreshRunnables = new LinkedList<>();
+    private final List<Runnable> refreshRunnables = new LinkedList<>();
     private ModConfig config;
 
     public ConfigResolver() {

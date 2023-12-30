@@ -1,6 +1,3 @@
 {
-  "parent": "quark:tiny_potato/base",
-  "textures": {
-    "all": "quark:model/tiny_potato/trans"
-  }
+  "parent": "quark:tiny_potato/transtater"
 }

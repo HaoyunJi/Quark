@@ -76,10 +76,10 @@ public class FoxhoundModule extends QuarkModule {
 				.build("foxhound");
 		RegistryHelper.register(foxhoundType, "foxhound", Registry.ENTITY_TYPE_REGISTRY);
 
-		EntitySpawnHandler.registerSpawn(this, foxhoundType, MobCategory.MONSTER, Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Foxhound::spawnPredicate, spawnConfig);
-		EntitySpawnHandler.track(this, foxhoundType, MobCategory.MONSTER, lesserSpawnConfig, true);
+		EntitySpawnHandler.registerSpawn(foxhoundType, MobCategory.MONSTER, Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Foxhound::spawnPredicate, spawnConfig);
+		EntitySpawnHandler.track(foxhoundType, MobCategory.MONSTER, lesserSpawnConfig, true);
 
-		EntitySpawnHandler.addEgg(foxhoundType, 0x890d0d, 0xf2af4b, spawnConfig);
+		EntitySpawnHandler.addEgg(this, foxhoundType, 0x890d0d, 0xf2af4b, spawnConfig);
 
 		EntityAttributeHandler.put(foxhoundType, Wolf::createAttributes);
 		

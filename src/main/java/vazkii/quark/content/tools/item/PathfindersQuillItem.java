@@ -30,9 +30,12 @@ import vazkii.arl.interf.IItemColorProvider;
 import vazkii.arl.util.ClientTicker;
 import vazkii.arl.util.ItemNBTHelper;
 import vazkii.quark.base.item.QuarkItem;
+import vazkii.quark.base.module.ModuleLoader;
 import vazkii.quark.base.module.QuarkModule;
+import vazkii.quark.content.mobs.module.StonelingsModule;
 import vazkii.quark.content.tools.module.PathfinderMapsModule;
 import vazkii.quark.content.tools.module.PathfinderMapsModule.TradeInfo;
+import vazkii.quark.content.world.module.GlimmeringWealdModule;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -371,8 +374,19 @@ public class PathfindersQuillItem extends QuarkItem implements IItemColorProvide
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         if ((isEnabled() && allowedIn(group)) || group == CreativeModeTab.TAB_SEARCH) {
-            for (TradeInfo trade : PathfinderMapsModule.tradeList)
+            boolean generatedWeald = false;
+
+            for (TradeInfo trade : PathfinderMapsModule.tradeList) {
+                if (trade.biome.equals(GlimmeringWealdModule.BIOME_NAME))
+                    generatedWeald = true;
                 items.add(forBiome(trade.biome.toString(), trade.color));
+            }
+            if (!generatedWeald &&
+                ModuleLoader.INSTANCE.isModuleEnabled(StonelingsModule.class) &&
+                ModuleLoader.INSTANCE.isModuleEnabled(GlimmeringWealdModule.class) &&
+                StonelingsModule.wealdPathfinderMaps) {
+                items.add(forBiome(GlimmeringWealdModule.BIOME_NAME.toString(), 0x317546));
+            }
         }
     }
 

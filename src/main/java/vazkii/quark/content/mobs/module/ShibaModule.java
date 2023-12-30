@@ -53,8 +53,8 @@ public class ShibaModule extends QuarkModule {
 				.build("shiba");
 		RegistryHelper.register(shibaType, "shiba", Registry.ENTITY_TYPE_REGISTRY);
 
-		EntitySpawnHandler.registerSpawn(this, shibaType, MobCategory.CREATURE, Type.ON_GROUND, Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, spawnConfig);
-		EntitySpawnHandler.addEgg(shibaType, 0xa86741, 0xe8d5b6, spawnConfig);
+		EntitySpawnHandler.registerSpawn(shibaType, MobCategory.CREATURE, Type.ON_GROUND, Types.MOTION_BLOCKING_NO_LEAVES, Animal::checkAnimalSpawnRules, spawnConfig);
+		EntitySpawnHandler.addEgg(this, shibaType, 0xa86741, 0xe8d5b6, spawnConfig);
 
 		EntityAttributeHandler.put(shibaType, Wolf::createAttributes);
 

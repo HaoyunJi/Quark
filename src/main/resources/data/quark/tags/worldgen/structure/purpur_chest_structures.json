@@ -1,0 +1,66 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:end_city",
+    {
+      "id": "cobbler:shulker_factory",
+      "required": false
+    },
+    {
+      "id": "dungeons_plus:end_ruins",
+      "required": false
+    },
+    {
+      "id": "pandoras_creatures:end_prison",
+      "required": false
+    },
+    {
+      "id": "endreborn:end_crypt",
+      "required": false
+    },
+    {
+      "id": "endreborn:end_shipwreck",
+      "required": false
+    },
+    {
+      "id": "majruszs_difficulty:flying_end_ship",
+      "required": false
+    },
+    {
+      "id": "majruszs_difficulty:flying_phantom_structure",
+      "required": false
+    },
+    {
+      "id": "outer_end:catacombs",
+      "required": false
+    },
+    {
+      "id": "outer_end:end_tower",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:ancient_city_end",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_end",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:pyramid_end",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:ruined_portal_end",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:shipwreck_end",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:stronghold_end",
+      "required": false
+    }
+  ]
+}

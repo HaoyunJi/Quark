@@ -202,10 +202,11 @@ public class AttributeTooltips {
 	private static int renderAttribute(PoseStack matrix, Attribute attribute, AttributeSlot slot, int x, int y, ItemStack stack, Multimap<Attribute, AttributeModifier> slotAttributes, Minecraft mc, boolean forceRenderIfZero, Multimap<Attribute, AttributeModifier> equippedSlotAttributes, @Nullable Set<Attribute> equippedAttrsToRender) {
 		AttributeIconEntry entry = getIconForAttribute(attribute);
 		if (entry != null) {
+			if (equippedAttrsToRender != null)
+				equippedAttrsToRender.remove(attribute);
+
 			double value = getAttribute(mc.player, slot, stack, slotAttributes, attribute);
 			if (value != 0 || forceRenderIfZero) {
-				if (equippedAttrsToRender != null)
-					equippedAttrsToRender.remove(attribute);
 
 				RenderSystem.setShader(GameRenderer::getPositionTexShader);
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -447,10 +448,11 @@ public class AttributeTooltips {
 					for (Attribute key : slotAttributes.keySet()) {
 						AttributeIconEntry icons = getIconForAttribute(key);
 						if (icons != null) {
+							equippedAttrsToRender.remove(key);
+
 							double value = getAttribute(mc.player, slot, stack, slotAttributes, key);
 
 							if (value != 0) {
-								equippedAttrsToRender.remove(key);
 
 								MutableComponent valueStr = format(key, value, icons.displayTypes().get(slot));
 								width += font.width(valueStr) + 20;
@@ -462,7 +464,6 @@ public class AttributeTooltips {
 						AttributeIconEntry icons = getIconForAttribute(key);
 						if (icons != null) {
 							double value = getAttribute(mc.player, slot, stack, slotAttributes, key);
-
 							MutableComponent valueStr = format(key, value, icons.displayTypes().get(slot));
 							width += font.width(valueStr) + 20;
 						}

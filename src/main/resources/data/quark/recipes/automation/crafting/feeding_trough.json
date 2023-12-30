@@ -1,12 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "F F",
+    "#W#",
     "###"
   ],
   "key": {
-    "F": {
-      "tag": "forge:fence_gates/wooden"
+    "W": {
+      "item": "minecraft:wheat"
     },
     "#": {
       "tag": "minecraft:planks"

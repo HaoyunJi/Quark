@@ -1,34 +1,24 @@
 package vazkii.quark.base.module;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
 import com.google.common.collect.Lists;
-
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import vazkii.arl.util.RegistryHelper;
 import vazkii.quark.api.event.ModuleLoadedEvent;
 import vazkii.quark.api.event.ModuleStateChangedEvent;
 import vazkii.quark.base.Quark;
 import vazkii.quark.base.module.config.ConfigFlagManager;
 import vazkii.quark.base.module.hint.HintObject;
+
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class QuarkModule {
 
@@ -128,6 +118,16 @@ public class QuarkModule {
 	}
 
 	@OnlyIn(Dist.CLIENT)
+	public void registerItemColors(RegisterColorHandlersEvent.Item event) {
+		// NO-OP
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+		// NO-OP
+	}
+
+	@OnlyIn(Dist.CLIENT)
 	public void registerClientTooltipComponentFactories(RegisterClientTooltipComponentFactoriesEvent event) {
 		// NO-OP
 	}
@@ -139,7 +139,7 @@ public class QuarkModule {
 	public final void addStackInfo(BiConsumer<Item, Component> consumer) {
 		if(!enabled)
 			return;
-		
+
 		for(HintObject hint : hints)
 			hint.apply(consumer);
 		addAdditionalHints(consumer);
@@ -147,7 +147,7 @@ public class QuarkModule {
 
 	public void addAdditionalHints(BiConsumer<Item, Component> consumer) {
 
-	}	
+	}
 
 	@OnlyIn(Dist.CLIENT)
 	public void firstClientTick() {

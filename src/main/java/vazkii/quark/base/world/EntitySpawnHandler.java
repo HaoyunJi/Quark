@@ -31,19 +31,18 @@ public class EntitySpawnHandler {
 
 	private static final List<TrackedSpawnConfig> trackedSpawnConfigs = new LinkedList<>();
 
-	public static <T extends Mob> void registerSpawn(QuarkModule module, EntityType<T> entityType, MobCategory classification, Type placementType, Heightmap.Types heightMapType, SpawnPredicate<T> placementPredicate, EntitySpawnConfig config) {
+	public static <T extends Mob> void registerSpawn(EntityType<T> entityType, MobCategory classification, Type placementType, Heightmap.Types heightMapType, SpawnPredicate<T> placementPredicate, EntitySpawnConfig config) {
 		SpawnPlacements.register(entityType, placementType, heightMapType, placementPredicate);
 
-		track(module, entityType, classification, config, false);
+		track(entityType, classification, config, false);
 	}
 
-	public static <T extends Mob> void track(QuarkModule module, EntityType<T> entityType, MobCategory classification, EntitySpawnConfig config, boolean secondary) {
-		config.setModule(module);
+	public static <T extends Mob> void track(EntityType<T> entityType, MobCategory classification, EntitySpawnConfig config, boolean secondary) {
 		trackedSpawnConfigs.add(new TrackedSpawnConfig(entityType, classification, config, secondary));
 	}
 
-	public static void addEgg(EntityType<? extends Mob> entityType, int color1, int color2, EntitySpawnConfig config) {
-		addEgg(entityType, color1, color2, config.module, config::isEnabled);
+	public static void addEgg(QuarkModule module, EntityType<? extends Mob> entityType, int color1, int color2, EntitySpawnConfig config) {
+		addEgg(entityType, color1, color2, module, config::isEnabled);
 	}
 
 	public static void addEgg(EntityType<? extends Mob> entityType, int color1, int color2, QuarkModule module, BooleanSupplier enabledSupplier) {

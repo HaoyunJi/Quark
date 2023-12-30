@@ -1,0 +1,37 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "dungeons_plus:soul_prison",
+      "required": false
+    },
+    {
+      "id": "dungeons_plus:warped_garden",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:mineshaft_warped",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:outpost_warped",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:shipwreck_warped",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:temple_nether_soul",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:temple_nether_warped",
+      "required": false
+    },
+    {
+      "id": "repurposed_structures:village_warped",
+      "required": false
+    }
+  ]
+}

@@ -65,10 +65,12 @@ public class ItemSharingModule extends QuarkModule {
 
 		StringBuilder before = new StringBuilder();
 
+		int halfSpace = mc.font.width(" ") / 2;
+
 		sequence.accept((counter_, style, character) -> {
 			String sofar = before.toString();
-			if (sofar.endsWith("    ")) {
-				render(mc, poseStack, sofar.substring(0, sofar.length() - 3), x, y, style, color);
+			if (sofar.endsWith("   ")) {
+				render(mc, poseStack, sofar.substring(0, sofar.length() - 2), character == ' ' ? 0 : -halfSpace, x, y, style, color);
 				return false;
 			}
 			before.append((char) character);
@@ -174,7 +176,7 @@ public class ItemSharingModule extends QuarkModule {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	private static void render(Minecraft mc, PoseStack pose, String before, float x, float y, Style style, int color) {
+	private static void render(Minecraft mc, PoseStack pose, String before, float extraShift, float x, float y, Style style, int color) {
 		float a = (color >> 24 & 255) / 255.0F;
 
 		HoverEvent hoverEvent = style.getHoverEvent();
@@ -186,7 +188,7 @@ public class ItemSharingModule extends QuarkModule {
 			if (stack.isEmpty())
 				stack = new ItemStack(Blocks.BARRIER); // for invalid icon
 
-			int shift = mc.font.width(before);
+			float shift = mc.font.width(before) + extraShift;
 
 			if (a > 0) {
 				alphaValue = a;

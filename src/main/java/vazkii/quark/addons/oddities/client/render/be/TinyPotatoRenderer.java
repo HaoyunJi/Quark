@@ -1,18 +1,9 @@
 package vazkii.quark.addons.oddities.client.render.be;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import javax.annotation.Nonnull;
-
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -41,6 +32,13 @@ import vazkii.quark.addons.oddities.util.TinyPotatoInfo;
 import vazkii.quark.content.tools.item.RuneItem;
 import vazkii.quark.content.tools.module.ColorRunesModule;
 import vazkii.quark.mixin.client.accessor.AccessorModelManager;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 @OnlyIn(Dist.CLIENT)
 public class TinyPotatoRenderer implements BlockEntityRenderer<TinyPotatoBlockEntity> {
@@ -268,6 +266,12 @@ public class TinyPotatoRenderer implements BlockEntityRenderer<TinyPotatoBlockEn
 				case WEST -> {
 					if (mySon) {
 						ms.translate(0.95F, -0.29F, 0.9F);
+						if (stack.hasCustomHoverName()) {
+							TinyPotatoInfo info = TinyPotatoInfo.fromComponent(stack.getHoverName());
+							if (info.name().equals("kingdaddydmac")) {
+								ms.translate(0.55F, 0, 0);
+							}
+						}
 					} else if (block) {
 						ms.translate(1F, 0.8F, 1F);
 					} else {

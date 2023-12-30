@@ -6,9 +6,22 @@
     "overrides": [
         {
             "predicate": {
+                "quark:shiny": 1
+            },
+            "model": "quark:item/shiny_slime_in_a_bucket"
+        },
+        {
+            "predicate": {
                 "excited": 1
             },
             "model": "quark:item/slime_in_a_bucket_excited"
+        },
+        {
+            "predicate": {
+                "quark:shiny": 1,
+                "excited": 1
+            },
+            "model": "quark:item/shiny_slime_in_a_bucket_excited"
         }
     ]
 }

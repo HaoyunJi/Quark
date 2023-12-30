@@ -3,6 +3,7 @@ package vazkii.quark.base.module.config.type;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
+import vazkii.quark.base.module.QuarkModule;
 import vazkii.quark.base.module.config.Config;
 import vazkii.quark.base.module.config.ConfigFlagManager;
 
@@ -46,9 +47,9 @@ public class CompoundBiomeConfig extends AbstractConfigType implements IBiomeCon
 	}
 
 	@Override
-	public void onReload(ConfigFlagManager flagManager) {
-		tags.onReload(flagManager);
-		biomes.onReload(flagManager);
+	public void onReload(QuarkModule module, ConfigFlagManager flagManager) {
+		tags.onReload(module, flagManager);
+		biomes.onReload(module, flagManager);
 	}
 
 	@Override

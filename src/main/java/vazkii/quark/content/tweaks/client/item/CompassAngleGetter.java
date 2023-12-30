@@ -131,7 +131,7 @@ public class CompassAngleGetter {
 				if(unknownAngle.needsUpdate(gameTime))
 					unknownAngle.wobble(gameTime, Math.random());
 
-				angle = unknownAngle.rotation + ((double) worldIn.hashCode() / Math.PI);
+				angle = unknownAngle.rotation + shift(id);
 			}
 
 			return Mth.positiveModulo((float) angle, 1.0F);
@@ -145,6 +145,11 @@ public class CompassAngleGetter {
 		private double getAngleToPosition(Entity entity, BlockPos blockpos) {
 			Vec3 pos = entity.position();
 			return Math.atan2(blockpos.getZ() - pos.z, blockpos.getX() - pos.x);
+		}
+
+		// Magic number cribbed from vanilla
+		private float shift(int id) {
+			return (id * 1327217883) / (float) Integer.MAX_VALUE;
 		}
 
 		// vanilla copy from here on out

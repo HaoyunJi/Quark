@@ -107,8 +107,8 @@ public class CrabsModule extends QuarkModule {
 				.build("crab");
 		RegistryHelper.register(crabType, "crab", Registry.ENTITY_TYPE_REGISTRY);
 
-		EntitySpawnHandler.registerSpawn(this, crabType, MobCategory.CREATURE, Type.ON_GROUND, Types.MOTION_BLOCKING_NO_LEAVES, Crab::spawnPredicate, spawnConfig);
-		EntitySpawnHandler.addEgg(crabType, 0x893c22, 0x916548, spawnConfig);
+		EntitySpawnHandler.registerSpawn(crabType, MobCategory.CREATURE, Type.ON_GROUND, Types.MOTION_BLOCKING_NO_LEAVES, Crab::spawnPredicate, spawnConfig);
+		EntitySpawnHandler.addEgg(this, crabType, 0x893c22, 0x916548, spawnConfig);
 
 		EntityAttributeHandler.put(crabType, Crab::prepareAttributes);
 

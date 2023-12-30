@@ -18,6 +18,7 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import vazkii.quark.base.handler.MiscUtil;
 import vazkii.quark.base.handler.QuarkSounds;
 import vazkii.quark.base.module.LoadModule;
 import vazkii.quark.base.module.ModuleCategory;
@@ -50,8 +51,8 @@ public class PatTheDogsModule extends QuarkModule {
 			boolean alreadySetUp = wolf.goalSelector.getAvailableGoals().stream().anyMatch((goal) -> goal.getGoal() instanceof WantLoveGoal);
 
 			if (!alreadySetUp) {
-				wolf.goalSelector.addGoal(4, new NuzzleGoal(wolf, 0.5F, 16, 2, SoundEvents.WOLF_WHINE));
-				wolf.goalSelector.addGoal(5, new WantLoveGoal(wolf, 0.2F));
+				MiscUtil.addGoalJustAfterLatestWithPriority(wolf.goalSelector, 4, new NuzzleGoal(wolf, 0.5F, 16, 2, SoundEvents.WOLF_WHINE));
+				MiscUtil.addGoalJustAfterLatestWithPriority(wolf.goalSelector, 5, new WantLoveGoal(wolf, 0.2F));
 			}
 		}
 	}

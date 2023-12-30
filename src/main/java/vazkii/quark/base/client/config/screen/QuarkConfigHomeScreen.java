@@ -105,7 +105,7 @@ public class QuarkConfigHomeScreen extends AbstractQScreen {
 		addRenderableWidget(new SocialButton(left, vStart, Component.translatable("quark.gui.config.social.website"), 0x48ddbc, 0, webLink("https://quarkmod.net")));
 		addRenderableWidget(new SocialButton(left + bWidth + pad, vStart, Component.translatable("quark.gui.config.social.discord"), 0x7289da, 1, webLink("https://discord.gg/vm")));
 		addRenderableWidget(new SocialButton(left + (bWidth + pad) * 2, vStart, Component.translatable("quark.gui.config.social.patreon"), 0xf96854, 2, webLink("https://patreon.com/vazkii")));
-		addRenderableWidget(new SocialButton(left + (bWidth + pad) * 3, vStart, Component.translatable("quark.gui.config.social.reddit"), 0xff4400, 3, webLink("https://reddit.com/r/quarkmod")));
+		addRenderableWidget(new SocialButton(left + (bWidth + pad) * 3, vStart, Component.translatable("quark.gui.config.social.forum"), 0xb650d8, 3, webLink("https://forum.violetmoon.org")));
 		addRenderableWidget(new SocialButton(left + (bWidth + pad) * 4, vStart, Component.translatable("quark.gui.config.social.twitter"), 0x1da1f2, 4, webLink("https://twitter.com/VazkiiMods")));
 	}
 

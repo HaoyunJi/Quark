@@ -1,0 +1,92 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/tropical_fish_bucket"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "quark:base": 1,
+        "quark:pattern": 1
+      },
+      "model": "quark:item/tropical_fish_bucket_kob"
+    },
+    {
+      "predicate": {
+        "quark:base": 1,
+        "quark:pattern": 2
+      },
+      "model": "quark:item/tropical_fish_bucket_sunstreak"
+    },
+    {
+      "predicate": {
+        "quark:base": 1,
+        "quark:pattern": 3
+      },
+      "model": "quark:item/tropical_fish_bucket_snooper"
+    },
+    {
+      "predicate": {
+        "quark:base": 1,
+        "quark:pattern": 4
+      },
+      "model": "quark:item/tropical_fish_bucket_dasher"
+    },
+    {
+      "predicate": {
+        "quark:base": 1,
+        "quark:pattern": 5
+      },
+      "model": "quark:item/tropical_fish_bucket_brinely"
+    },
+    {
+      "predicate": {
+        "quark:base": 1,
+        "quark:pattern": 6
+      },
+      "model": "quark:item/tropical_fish_bucket_spotty"
+    },
+    {
+      "predicate": {
+        "quark:base": 2,
+        "quark:pattern": 1
+      },
+      "model": "quark:item/tropical_fish_bucket_flopper"
+    },
+    {
+      "predicate": {
+        "quark:base": 2,
+        "quark:pattern": 2
+      },
+      "model": "quark:item/tropical_fish_bucket_stripey"
+    },
+    {
+      "predicate": {
+        "quark:base": 2,
+        "quark:pattern": 3
+      },
+      "model": "quark:item/tropical_fish_bucket_glitter"
+    },
+    {
+      "predicate": {
+        "quark:base": 2,
+        "quark:pattern": 4
+      },
+      "model": "quark:item/tropical_fish_bucket_blockfish"
+    },
+    {
+      "predicate": {
+        "quark:base": 2,
+        "quark:pattern": 5
+      },
+      "model": "quark:item/tropical_fish_bucket_betty"
+    },
+    {
+      "predicate": {
+        "quark:base": 2,
+        "quark:pattern": 6
+      },
+      "model": "quark:item/tropical_fish_bucket_clayfish"
+    }
+  ]
+}

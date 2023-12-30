@@ -12,7 +12,32 @@
               "source": "block_entity"
             }
           ],
-          "name": "minecraft:enchanting_table"
+          "name": "minecraft:enchanting_table",
+          "conditions": [
+            {
+              "condition": "quark:flag",
+              "flag": "matrix_enchanting_autoconvert"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_name",
+              "source": "block_entity"
+            }
+          ],
+          "name": "quark:matrix_enchanter",
+          "conditions": [
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "condition": "quark:flag",
+                "flag": "matrix_enchanting_autoconvert"
+              }
+            }
+          ]
         }
       ],
       "conditions": [

@@ -2,10 +2,11 @@ package vazkii.quark.base.module.config.type;
 
 import vazkii.quark.base.module.QuarkModule;
 import vazkii.quark.base.module.config.Config;
+import vazkii.quark.base.module.config.ConfigFlagManager;
 
 public class EntitySpawnConfig extends AbstractConfigType {
 
-	public QuarkModule module;
+	private boolean enabled = false;
 
 	@Config
 	@Config.Min(value = 0, exclusive = true)
@@ -29,12 +30,15 @@ public class EntitySpawnConfig extends AbstractConfigType {
 		this.biomes = biomes;
 	}
 
-	public void setModule(QuarkModule module) {
-		this.module = module;
+	@Override
+	public void onReload(QuarkModule module, ConfigFlagManager flagManager) {
+		super.onReload(module, flagManager);
+		
+		enabled = (module != null && module.enabled);
 	}
-
+	
 	public boolean isEnabled() {
-		return module != null && module.enabled;
+		return enabled;
 	}
 
 }

@@ -1,8 +1,5 @@
 package vazkii.quark.addons.oddities.block;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -35,6 +32,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.AABB;
@@ -49,6 +47,9 @@ import vazkii.quark.addons.oddities.item.TinyPotatoBlockItem;
 import vazkii.quark.addons.oddities.module.TinyPotatoModule;
 import vazkii.quark.base.block.QuarkBlock;
 import vazkii.quark.base.module.QuarkModule;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author WireSegal
@@ -90,6 +91,12 @@ public class TinyPotatoBlock extends QuarkBlock implements SimpleWaterloggedBloc
 		builder.add(HORIZONTAL_FACING, WATERLOGGED);
 	}
 
+	@Nonnull
+	@Override
+	public FluidState getFluidState(BlockState state) {
+		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+	}
+
 	@Override
 	public void onRemove(@Nonnull BlockState state, @Nonnull Level world, @Nonnull BlockPos pos, @Nonnull BlockState newState, boolean isMoving) {
 		if (!state.is(newState.getBlock())) {
@@ -127,10 +134,10 @@ public class TinyPotatoBlock extends QuarkBlock implements SimpleWaterloggedBloc
 		BlockEntity be = world.getBlockEntity(pos);
 		if (be instanceof TinyPotatoBlockEntity tater) {
 			tater.interact(player, hand, player.getItemInHand(hand), hit.getDirection());
-			
+
 			if(player instanceof ServerPlayer sp)
 				TinyPotatoModule.patPotatoTrigger.trigger(sp);
-			
+
 			if (!world.isClientSide) {
 				AABB box = SHAPE.bounds();
 				((ServerLevel) world).sendParticles(ParticleTypes.HEART, pos.getX() + box.minX + Math.random() * (box.maxX - box.minX), pos.getY() + box.maxY, pos.getZ() + box.minZ + Math.random() * (box.maxZ - box.minZ), 1, 0, 0, 0, 0);

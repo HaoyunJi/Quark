@@ -8,6 +8,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import vazkii.quark.base.module.LoadModule;
 import vazkii.quark.base.module.ModuleCategory;
@@ -19,7 +22,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@LoadModule(category = ModuleCategory.EXPERIMENTAL, enabledByDefault = false)
+@LoadModule(category = ModuleCategory.EXPERIMENTAL, enabledByDefault = false, hasSubscriptions = true)
 public class EnchantmentsBegoneModule extends QuarkModule {
 
 	@Config
@@ -40,6 +43,11 @@ public class EnchantmentsBegoneModule extends QuarkModule {
 			if (enchantment != null)
 				enchantments.add(enchantment);
 		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void stripAnvilEnchantments(AnvilUpdateEvent event) {
+		event.setOutput(begoneEnchantmentsFromItem(event.getOutput()));
 	}
 
 	public static void begoneItems(NonNullList<ItemStack> stacks) {
@@ -68,6 +76,20 @@ public class EnchantmentsBegoneModule extends QuarkModule {
 			return list;
 
 		return list.stream().filter(Predicate.not(enchantments::contains)).collect(Collectors.toList());
+	}
+
+	public static ItemStack begoneEnchantmentsFromItem(ItemStack stack) {
+		if (!staticEnabled || stack.isEmpty())
+			return stack;
+
+		Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
+		if (map.keySet().removeIf(enchantments::contains)) {
+			ItemStack out = stack.copy();
+			EnchantmentHelper.setEnchantments(map, out);
+			return out;
+		}
+
+		return stack;
 	}
 
 	public static List<EnchantmentInstance> begoneEnchantmentInstances(List<EnchantmentInstance> list) {

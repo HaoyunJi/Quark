@@ -252,7 +252,10 @@ public class CrateBlockEntity extends BaseContainerBlockEntity implements Worldl
 	}
 
 	private void setOpenProperty(BlockState state, boolean open) {
-		this.level.setBlock(this.getBlockPos(), state.setValue(CrateBlock.PROPERTY_OPEN, open), 3);
+		BlockPos pos = this.getBlockPos();
+		BlockState prev = level.getBlockState(pos);
+		if (prev.is(state.getBlock()))
+			level.setBlock(pos, state.setValue(CrateBlock.PROPERTY_OPEN, open), 3);
 	}
 
 	private void playSound(BlockState state, SoundEvent sound) {

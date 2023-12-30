@@ -61,9 +61,9 @@ public class HoeHarvestingModule extends QuarkModule {
 		if(!isHoe(hoe))
 			return 1;
 		else if (hoe.is(bigHarvestingHoesTag))
-			return regularHoeRadius;
-		else
 			return highTierHoeRadius;
+		else
+			return regularHoeRadius;
 	}
 
 	public static boolean isHoe(ItemStack itemStack) {

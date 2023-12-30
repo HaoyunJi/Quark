@@ -22,6 +22,7 @@ import net.minecraftforge.event.entity.living.BabyEntitySpawnEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import vazkii.quark.base.handler.MiscUtil;
 import vazkii.quark.base.module.LoadModule;
 import vazkii.quark.base.module.ModuleCategory;
 import vazkii.quark.base.module.ModuleLoader;
@@ -80,7 +81,7 @@ public class PigLittersModule extends QuarkModule {
 						.orElse(-1);
 
 				if (priority >= 0)
-					pig.goalSelector.addGoal(4, new TemptGoal(pig, 1.2D, Ingredient.of(Items.GOLDEN_CARROT), false));
+					MiscUtil.addGoalJustAfterLatestWithPriority(pig.goalSelector, 4, new TemptGoal(pig, 1.2D, Ingredient.of(Items.GOLDEN_CARROT), false));
 			}
 		}
 	}

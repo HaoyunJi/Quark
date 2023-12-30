@@ -11,6 +11,7 @@ import vazkii.quark.base.client.config.screen.CategoryScreen;
 import vazkii.quark.base.client.config.screen.WidgetWrapper;
 import vazkii.quark.base.client.config.screen.inputtable.IInputtableConfigType;
 import vazkii.quark.base.client.config.screen.inputtable.RGBColorInputScreen;
+import vazkii.quark.base.module.QuarkModule;
 import vazkii.quark.base.module.config.Config;
 import vazkii.quark.base.module.config.ConfigFlagManager;
 
@@ -77,8 +78,8 @@ public class RGBColorConfig extends AbstractInputtableType<RGBColorConfig> {
 	}
 
 	@Override
-	public void onReload(ConfigFlagManager flagManager) {
-		super.onReload(flagManager);
+	public void onReload(QuarkModule module, ConfigFlagManager flagManager) {
+		super.onReload(module, flagManager);
 		
 		color = calculateColor();
 	}

@@ -33,7 +33,8 @@ public final class ModuleLoader {
 	private enum Step {
 		CONSTRUCT, CONSTRUCT_CLIENT, REGISTER, POST_REGISTER, CONFIG_CHANGED, CONFIG_CHANGED_CLIENT, SETUP, SETUP_CLIENT,
 		REGISTER_RELOADABLE, MODEL_BAKE, MODEL_LAYERS, TEXTURE_STITCH, POST_TEXTURE_STITCH, LOAD_COMPLETE, GENERATE_HINTS,
-		FIRST_CLIENT_TICK, REGISTER_KEYBINDS, REGISTER_ADDITIONAL_MODELS, REGISTER_TOOLTIP_COMPONENT_FACTORIES
+		FIRST_CLIENT_TICK, REGISTER_KEYBINDS, REGISTER_ADDITIONAL_MODELS, REGISTER_TOOLTIP_COMPONENT_FACTORIES,
+		REGISTER_ITEM_COLORS, REGISTER_BLOCK_COLORS
 	}
 
 	public static final ModuleLoader INSTANCE = new ModuleLoader();
@@ -150,6 +151,16 @@ public final class ModuleLoader {
 	@OnlyIn(Dist.CLIENT)
 	public void registerClientTooltipComponentFactories(RegisterClientTooltipComponentFactoriesEvent event) {
 		dispatch(Step.REGISTER_TOOLTIP_COMPONENT_FACTORIES, m -> m.registerClientTooltipComponentFactories(event));
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public void registerItemColors(RegisterColorHandlersEvent.Item event) {
+		dispatch(Step.REGISTER_ITEM_COLORS, m -> m.registerItemColors(event));
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public void registerBlockColors(RegisterColorHandlersEvent.Block event) {
+		dispatch(Step.REGISTER_BLOCK_COLORS, m -> m.registerBlockColors(event));
 	}
 
 	public void loadComplete(ParallelDispatchEvent event) {
